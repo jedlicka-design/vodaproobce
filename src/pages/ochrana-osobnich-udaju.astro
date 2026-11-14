@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import { web, url } from '../data/web';
+// Text stránky dodá Ing. Havíř. Musí v něm být i zmínka, že zprávy
+// z kontaktního formuláře přeposílá služba Web3Forms.
+// Po doplnění textu odstranit `noindex`.
+---
+<Base title={`Ochrana osobních údajů | ${web.osoba}`} description="Zásady zpracování osobních údajů – Voda pro obce, Ing. Jiří Havíř." home={false} noindex>
+  <section class="section">
+    <div class="wrap legal">
+      <h1>Ochrana osobních údajů</h1>
+      <p>Správcem osobních údajů je {web.osoba}, {web.sidlo}. Kontakt: <a href={`mailto:${web.email}`}>{web.email}</a>, <a href={web.telefonHref}>{web.telefon}</a>.</p>
+      <a class="back" href={url()}>← Zpět na úvodní stránku</a>
+    </div>
+  </section>
+</Base>

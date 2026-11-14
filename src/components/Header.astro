@@ -1,0 +1,36 @@
+---
+import Logo from './Logo.astro';
+import { web, menu, url } from '../data/web';
+// Na podstránkách vedou kotvy zpět na úvodní stránku.
+interface Props { home?: boolean }
+const { home = true } = Astro.props;
+const prefix = home ? '' : url();
+---
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href={`${prefix}#uvod`} aria-label={`${web.nazev} – ${web.osoba}, úvod`}>
+      <Logo />
+      <span class="brand__name">{web.nazev}</span>
+      <span class="brand__person">{web.osoba}</span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+    <nav class="nav" id="menu" aria-label="Hlavní menu">
+      {menu.map((m) => <a class={m.cta ? 'nav__cta' : undefined} href={`${prefix}${m.href}`}>{m.label}</a>)}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const b = document.querySelector<HTMLButtonElement>('.menu-btn');
+  const n = document.getElementById('menu');
+  if (b && n) {
+    const close = () => { n.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); b.textContent = 'Menu'; };
+    b.addEventListener('click', () => {
+      const o = n.classList.toggle('open');
+      b.setAttribute('aria-expanded', String(o));
+      b.textContent = o ? 'Zavřít' : 'Menu';
+    });
+    n.addEventListener('click', (e) => { if ((e.target as HTMLElement).tagName === 'A' && n.classList.contains('open')) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && n.classList.contains('open')) { close(); b.focus(); } });
+  }
+</script>

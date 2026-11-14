@@ -1,0 +1,88 @@
+---
+import Icon from './Icon.astro';
+import { web, url } from '../data/web';
+---
+<section id="kontakt" class="section contact">
+  <div class="wrap">
+    <div>
+      <h2>Kontakt</h2>
+      <p class="contact__intro">Úvodní schůzka je nezávazná a zdarma. Probíhá přímo na obecním úřadě.</p>
+      <div class="cline"><span class="cline__ico"><Icon name="telefon" color="#fff" /></span>
+        <div><small>Telefon</small><a href={web.telefonHref}>{web.telefon}</a></div></div>
+      <div class="cline"><span class="cline__ico"><Icon name="email" color="#fff" /></span>
+        <div><small>E-mail</small><a href={`mailto:${web.email}`}>{web.email}</a></div></div>
+      <div class="cline"><span class="cline__ico"><Icon name="misto" color="#fff" /></span>
+        <div><small>Sídlo</small><span>{web.sidlo}</span></div></div>
+    </div>
+
+    <form id="poptavka" class="form" action="https://api.web3forms.com/submit" method="post" data-key={web.web3formsKey}>
+      <h3>Napište mi</h3>
+      <p class="form__lead">Připravím nabídku pro vaši obec nebo domluvíme úvodní schůzku.</p>
+      <input type="hidden" name="access_key" value={web.web3formsKey}>
+      <input type="hidden" name="subject" value="Poptávka z webu vodaproobce.cz">
+      <input type="hidden" name="from_name" value="Web vodaproobce.cz">
+      <label class="field">Jméno a příjmení<input type="text" name="jmeno" autocomplete="name" required></label>
+      <label class="field">Obec<input type="text" name="obec" required></label>
+      <div class="row2">
+        <label class="field">Telefon<input type="tel" name="telefon" autocomplete="tel"></label>
+        <label class="field">E-mail<input type="email" name="email" autocomplete="email"></label>
+      </div>
+      <label class="field">Zpráva (nepovinné)<textarea name="zprava" rows="4"></textarea></label>
+      <!-- honeypot: roboti pole vyplní, lidé ho nevidí -->
+      <label class="hp" aria-hidden="true">Nevyplňujte<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off"></label>
+      <label class="agree"><input type="checkbox" name="souhlas" value="ano" required><span>Souhlasím se zpracováním údajů pro účel odpovědi. <a href={url('ochrana-osobnich-udaju/')}>Ochrana osobních údajů</a></span></label>
+      <p class="form__status" role="status" aria-live="polite"></p>
+      <button class="submit" type="submit">Poslat poptávku</button>
+    </form>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('poptavka') as HTMLFormElement | null;
+  if (form) {
+    const status = form.querySelector<HTMLElement>('.form__status')!;
+    const btn = form.querySelector<HTMLButtonElement>('.submit')!;
+    const tel = form.querySelector<HTMLInputElement>('[name=telefon]')!;
+    const mail = form.querySelector<HTMLInputElement>('[name=email]')!;
+    const fallback = 'Zavolejte prosím na <a href="tel:+420733677749">+420 733 677 749</a> nebo napište na <a href="mailto:havir@vodaproobce.cz">havir@vodaproobce.cz</a>.';
+    const show = (cls: 'ok' | 'err', html: string) => {
+      status.className = `form__status form__status--${cls}`;
+      status.innerHTML = html;
+    };
+
+    // Bez telefonu i e-mailu nelze odpovědět.
+    const needContact = () => {
+      const empty = !tel.value.trim() && !mail.value.trim();
+      tel.setCustomValidity(empty ? 'Vyplňte telefon nebo e-mail, ať se vám můžu ozvat.' : '');
+    };
+    tel.addEventListener('input', needContact);
+    mail.addEventListener('input', needContact);
+
+    form.addEventListener('submit', async (e) => {
+      needContact();
+      if (!form.checkValidity()) { e.preventDefault(); form.reportValidity(); return; }
+      e.preventDefault();
+      if (!form.dataset.key) { show('err', `Formulář zatím není v provozu. ${fallback}`); return; }
+      btn.disabled = true;
+      status.textContent = '';
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: new FormData(form),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.success !== false) {
+          form.reset();
+          show('ok', 'Děkuji, zpráva odešla. Ozvu se vám co nejdřív.');
+        } else {
+          show('err', `Zprávu se nepodařilo odeslat. ${fallback}`);
+        }
+      } catch {
+        show('err', `Zprávu se nepodařilo odeslat. ${fallback}`);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+</script>

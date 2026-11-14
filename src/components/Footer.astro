@@ -1,0 +1,9 @@
+---
+import { web, url } from '../data/web';
+---
+<footer class="foot">
+  <div class="wrap">
+    <span>{web.nazev} – {web.osoba}, {web.sidlo}.{web.ico && ` IČO ${web.ico}.`} Nejsem plátce DPH.</span>
+    <a href={url('ochrana-osobnich-udaju/')}>Ochrana osobních údajů</a>
+  </div>
+</footer>

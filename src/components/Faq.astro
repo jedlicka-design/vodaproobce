@@ -1,0 +1,13 @@
+---
+import { dotazy } from '../data/obsah';
+---
+<section id="dotazy" class="section section--mist">
+  <div class="wrap head faq-wrap">
+    <h2>{dotazy.nadpis}</h2>
+    <div class="faq">
+      {dotazy.polozky.map((d) => (
+        <details><summary>{d.otazka}</summary><p>{d.odpoved}</p></details>
+      ))}
+    </div>
+  </div>
+</section>

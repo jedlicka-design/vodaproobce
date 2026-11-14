@@ -1,0 +1,210 @@
+:root{
+  --navy:#0f3550; --navy-deep:#0b2739; --blue:#1f6f9f; --green:#2c9a7a;
+  --sky:#e7f1f8; --mist:#f5f8fa; --ink:#1c2730; --muted:#4a5964; --line:#d6e1e9;
+  --serif:'Source Serif 4 Variable', Georgia, serif; --sans:'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --wrap:1160px; --gut:clamp(20px,4vw,40px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:#fff;color:var(--ink);font:400 18px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+a{color:var(--blue)} a:hover{color:var(--navy)}
+:focus-visible{outline:3px solid #7cc4ea;outline-offset:3px;border-radius:3px}
+h1,h2,h3{margin:0;color:var(--navy)}
+h2{font:600 clamp(32px,4.2vw,44px)/1.12 var(--serif);letter-spacing:-.01em}
+h3{font:600 19px/1.35 var(--sans)}
+p{margin:0}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gut)}
+.section{padding:clamp(64px,9vw,112px) 0}
+.section--mist{background:var(--mist)}
+.lead{font-size:19px;color:#3b4a55;max-width:62ch}
+.head{display:grid;grid-template-columns:1fr;gap:18px;align-items:start;margin-bottom:clamp(40px,5vw,60px)}
+.head--stack{grid-template-columns:1fr;align-items:start}
+
+/* Záhlaví */
+.top{position:sticky;top:0;z-index:20;background:var(--navy);border-bottom:3px solid var(--blue)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:76px}
+.brand{display:flex;align-items:center;gap:16px;color:#fff;text-decoration:none;white-space:nowrap}
+.brand:hover{color:#fff}
+.brand__mark{width:38px;height:38px;flex:0 0 38px}
+.brand__name{font:600 26px/1 var(--serif);letter-spacing:-.01em}
+.brand__person{font-size:15px;color:#c9d9e5;border-left:1px solid #3f6684;padding-left:16px;line-height:1.2}
+.nav{display:flex;align-items:center;gap:22px;font-size:15px;white-space:nowrap}
+.nav a{color:#dbe6ee;text-decoration:none}
+.nav a:hover{color:#fff}
+.nav .nav__cta{color:var(--navy);background:#fff;font-weight:600;border-radius:6px;padding:10px 18px}
+.nav .nav__cta:hover{background:var(--sky);color:var(--navy)}
+.menu-btn{display:none;background:none;border:1px solid #4a7393;color:#fff;font:600 15px var(--sans);border-radius:6px;padding:9px 14px;cursor:pointer}
+
+/* Úvod */
+.hero{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.hero .wrap{padding-top:clamp(56px,8vw,96px);padding-bottom:8px}
+.hero h1{color:#fff;font:600 clamp(44px,7vw,76px)/1.04 var(--serif);letter-spacing:-.02em;max-width:12ch}
+.hero__sub{margin-top:26px;font-size:clamp(19px,2vw,22px);line-height:1.55;color:#d3e0ea;max-width:44ch}
+.hero__cred{margin-top:28px;display:flex;align-items:center;gap:14px;font-size:16px;color:#a9c4d8}
+.hero__cred::before{content:"";width:28px;height:3px;background:var(--green);border-radius:2px;flex:0 0 28px}
+.scene{overflow:hidden;background:linear-gradient(var(--navy) 44%,var(--sky) 44%) left top/50.5% 100% no-repeat,linear-gradient(var(--navy) 48%,var(--sky) 48%) right top/50.5% 100% no-repeat}
+.scene svg{width:100%;max-width:var(--wrap);margin:0 auto;height:auto}
+.flow{stroke-dasharray:14 22;animation:flow 3.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-36}}
+@media (prefers-reduced-motion:reduce){.flow{animation:none}html{scroll-behavior:auto}}
+
+/* Služby */
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.svc{background:#fff;padding:32px 30px 34px}
+.icon{width:48px;height:48px;border-radius:12px;background:var(--sky);display:grid;place-items:center;margin-bottom:20px}
+.icon svg{width:26px;height:26px}
+.svc h3{margin-bottom:8px}
+.svc p{font-size:16px;color:var(--muted)}
+
+/* Pruh paušál */
+.band{margin-top:clamp(48px,6vw,72px);background:var(--navy);color:#fff;border-radius:10px;padding:clamp(32px,4vw,48px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px 56px;align-items:center}
+.band h3{color:#fff;font:600 clamp(24px,2.6vw,30px)/1.2 var(--serif);margin-bottom:10px}
+.band p{color:#d3e0ea;font-size:17px;max-width:60ch}
+.band__links{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.btn{display:inline-block;background:#fff;color:var(--navy);font-weight:600;font-size:16px;text-decoration:none;border-radius:6px;padding:14px 26px}
+.btn:hover{background:var(--sky);color:var(--navy)}
+.band__links a:not(.btn){color:#d3e0ea;font-size:15px}
+
+/* Podrobně */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:clamp(28px,3vw,40px)}
+.panel--key{border-color:var(--blue);box-shadow:inset 0 4px 0 var(--blue)}
+.panel h3{font-size:22px;margin-bottom:10px}
+.panel>p{font-size:16px;color:var(--muted);margin-bottom:20px}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:16px}
+.checks li{position:relative;padding-left:30px}
+.checks li::before{content:"";position:absolute;left:0;top:.3em;width:18px;height:18px;border-radius:50%;background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/12px no-repeat}
+.panel__top{display:flex;align-items:center;justify-content:space-between}.panel__top .tag{margin:0 0 20px}
+.tag{display:inline-block;font-size:13px;font-weight:600;color:var(--green);background:#e4f4ee;border-radius:20px;padding:3px 12px;margin-bottom:14px}
+
+/* Kalendář */
+.year{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;position:relative}
+.year::before{content:"";position:absolute;left:0;right:0;top:9px;height:2px;background:var(--line)}
+.season{position:relative;padding-top:38px}
+.season::before{content:"";position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--blue)}
+.season__when{font:500 22px/1.2 var(--serif);color:var(--blue);margin-bottom:8px}
+.season h3{font-size:18px;margin-bottom:8px}
+.season p{font-size:16px;color:var(--muted)}
+.note{margin-top:44px;font-size:17px}
+
+/* Ke stažení */
+.downloads{margin:0}
+.downloads h2{margin-bottom:clamp(32px,4vw,44px)}
+.files{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.file{display:flex;gap:20px;align-items:center;text-decoration:none;color:var(--ink);background:var(--mist);border:1px solid var(--line);border-radius:10px;padding:24px 26px;transition:border-color .15s}
+.file:hover{border-color:var(--blue);color:var(--ink)}
+.file__ico{width:52px;height:52px;flex:0 0 52px;border-radius:10px;background:#fff;display:grid;place-items:center;border:1px solid var(--line)}
+.file__ico svg{width:28px;height:28px}
+.file__t{display:block;font-size:18px;font-weight:600;color:var(--navy)}
+.file__d{display:block;font-size:15px;color:var(--muted)}
+.file__go{margin-left:auto;font-size:15px;font-weight:600;color:var(--blue);white-space:nowrap}
+
+/* Postup */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;counter-reset:s}
+.step{background:#fff;border:1px solid var(--line);border-radius:10px;padding:28px 26px 30px;position:relative}
+.step__n{width:44px;height:44px;border-radius:50%;background:var(--navy);color:#fff;font:600 20px/44px var(--serif);text-align:center;margin-bottom:20px}
+.step h3{margin-bottom:8px}
+.step p{font-size:16px;color:var(--muted)}
+.step--first{background:var(--sky);border-color:#c5dbea}
+.step--first p{color:var(--ink)}
+.lead-in{color:var(--navy)}
+.step:not(:last-child)::after{content:"";position:absolute;top:49px;right:-25px;width:26px;height:2px;background:var(--blue)}
+.free{color:var(--navy);font-weight:600}
+
+/* O mně */
+.about{display:grid;grid-template-columns:320px minmax(0,1fr);gap:clamp(32px,6vw,80px);align-items:center}
+.portrait{aspect-ratio:4/5;border-radius:10px;background:var(--sky);display:grid;place-items:center;color:#4f6575;font-size:14px;text-align:center;padding:24px}
+.about h2{margin-bottom:22px}
+.about p{font-size:19px;max-width:58ch}
+.about p+p{margin-top:16px;color:#3b4a55}
+.facts{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;padding:0;list-style:none}
+.facts li{font-size:15px;background:var(--mist);border:1px solid var(--line);border-radius:30px;padding:7px 16px;color:var(--navy)}
+
+/* Dotazy */
+.faq{border-top:1px solid var(--line);max-width:820px}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;padding:22px 48px 22px 0;position:relative;font-weight:600;font-size:18px;color:var(--navy)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";position:absolute;right:6px;top:50%;width:12px;height:12px;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue);transform:translateY(-75%) rotate(45deg);transition:transform .2s}
+.faq details[open] summary::after{transform:translateY(-25%) rotate(-135deg)}
+.faq details p{padding:0 48px 24px 0;font-size:16px;color:var(--muted);max-width:68ch}
+.faq summary:hover{color:var(--blue)}
+
+/* Kontakt */
+.contact{background:var(--navy);color:#fff}
+.contact .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:48px 80px}
+.contact h2{color:#fff;margin-bottom:18px}
+.contact__intro{color:#d3e0ea;margin-bottom:36px;max-width:36ch}
+.cline{display:flex;gap:16px;align-items:center;margin-bottom:20px}
+.cline__ico{width:44px;height:44px;flex:0 0 44px;border-radius:50%;border:1px solid #3f6684;display:grid;place-items:center}
+.cline__ico svg{width:20px;height:20px}
+.cline small{display:block;font-size:13px;color:#a9c0d1}
+.cline a,.cline span{color:#fff;font-size:20px;font-weight:600;text-decoration:none}
+.cline a:hover{text-decoration:underline;color:#fff}
+.form{background:#fff;color:var(--ink);border-radius:10px;padding:clamp(24px,3.5vw,40px);display:grid;gap:18px}
+.form h3{font:600 24px/1.2 var(--serif);color:var(--navy)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field{display:grid;gap:6px;font-size:14px;font-weight:600}
+.field input,.field textarea{font:400 17px var(--sans);color:var(--ink);padding:12px 14px;border:1px solid #b9c7d1;border-radius:6px;background:#fff;width:100%}
+.field input:focus,.field textarea:focus{border-color:var(--blue);outline:3px solid #cfe6f5;outline-offset:0}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted)}
+.agree input{margin-top:4px;width:18px;height:18px;accent-color:var(--navy)}
+.hp{position:absolute;left:-9999px}
+.submit{justify-self:start;font:600 17px var(--sans);background:var(--navy);color:#fff;border:0;border-radius:6px;padding:15px 28px;cursor:pointer}
+.submit:hover{background:var(--blue)}
+
+/* Patička */
+.foot{background:var(--navy);border-top:1px solid #2a5878;color:#a9c0d1;font-size:14px}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;padding-top:28px;padding-bottom:28px}
+.foot a{color:#a9c0d1}
+
+/* Mobil */
+@media (max-width:1180px){
+  .menu-btn{display:block}
+  .nav{display:none;position:absolute;left:0;right:0;top:100%;background:var(--navy);flex-direction:column;align-items:stretch;gap:0;padding:8px var(--gut) 20px;border-bottom:3px solid var(--blue)}
+  .nav.open{display:flex}
+  .nav a{padding:13px 0;border-bottom:1px solid #1e4560;font-size:17px}
+  .nav .nav__cta,.nav .nav__cta:hover{background:none;color:#fff;font-weight:600;border-radius:0;padding:13px 0;border-bottom:0}
+}
+@media (max-width:980px){
+  .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .step::after{display:none}
+  .year{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}
+  .year::before{display:none}
+  .contact .wrap{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  body{font-size:17px}
+  .brand__person{display:none}
+  .head,.grid2,.files,.about,.band{grid-template-columns:1fr}
+  .grid3,.steps{grid-template-columns:1fr}
+  .about .portrait{max-width:260px}
+  .year{grid-template-columns:1fr;gap:0;padding-left:34px}
+  .year::before{display:block;left:9px;right:auto;top:6px;bottom:6px;width:2px;height:auto}
+  .season{padding:0 0 32px}
+  .season::before{left:-34px;top:2px}
+  .row2{grid-template-columns:1fr}
+  .file{flex-wrap:wrap}
+  .file__go{margin-left:72px}
+  .scene svg{width:180%;max-width:none;margin-left:-80%}
+}
+.form__lead{margin:-8px 0 20px;color:var(--muted,#4a5964);font-size:16px;line-height:1.5}
+
+/* Formulář – stav odeslání */
+.form__status{font-size:16px;line-height:1.5;border-radius:6px;padding:14px 16px}
+.form__status:empty{display:none}
+.form__status--ok{background:#e4f4ee;color:#17614c}
+.form__status--err{background:#fbeaea;color:#8a1f1f}
+.form__status a{color:inherit;font-weight:600}
+.submit[disabled]{opacity:.6;cursor:wait}
+
+/* Podstránky (Ochrana osobních údajů) */
+.legal{max-width:760px}
+.legal h1{font:600 clamp(36px,5vw,52px)/1.1 var(--serif);letter-spacing:-.01em;margin-bottom:28px}
+.legal h2{font-size:clamp(24px,3vw,30px);margin:40px 0 14px}
+.legal p,.legal li{font-size:18px}
+.legal p+p{margin-top:14px}
+.back{display:inline-block;margin-top:48px;font-weight:600}
+.faq-wrap{margin-bottom:0;gap:36px}

@@ -1,0 +1,18 @@
+---
+import { kalendar } from '../data/obsah';
+import { url } from '../data/web';
+---
+<section id="kalendar" class="section">
+  <div class="wrap">
+    <div class="head">
+      <h2>{kalendar.nadpis}</h2>
+      <p class="lead">{kalendar.uvod}</p>
+    </div>
+    <div class="year">
+      {kalendar.obdobi.map((o) => (
+        <div class="season"><p class="season__when">{o.kdy}</p><h3>{o.nadpis}</h3><p>{o.text}</p></div>
+      ))}
+    </div>
+    <p class="note">Přesné termíny – co a kdy dodává obec a co zajistí odborný zástupce – najdete v <a href={url('Kalendar_povinnosti_kanalizace.pdf')}><strong>kalendáři povinností (PDF)</strong></a>.</p>
+  </div>
+</section>

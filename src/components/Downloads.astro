@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+import { keStazeni } from '../data/obsah';
+import { url } from '../data/web';
+---
+<section id="ke-stazeni" class="section">
+  <div class="wrap">
+    <div class="downloads">
+      <h2>{keStazeni.nadpis}</h2>
+      <div class="files">
+        {keStazeni.soubory.map((f) => (
+          <a class="file" href={url(f.soubor)} download>
+            <span class="file__ico"><Icon name={f.ikona} /></span>
+            <span><span class="file__t">{f.nazev}</span><span class="file__d">{f.popis}</span></span>
+            <span class="file__go">Stáhnout</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

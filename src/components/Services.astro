@@ -1,0 +1,35 @@
+---
+import Icon from './Icon.astro';
+import { sluzby } from '../data/obsah';
+---
+<section id="sluzby" class="section">
+  <div class="wrap">
+    <div class="head">
+      <h2>{sluzby.nadpis}</h2>
+      <p class="lead">{sluzby.uvod}</p>
+    </div>
+    <div class="grid2">
+      {sluzby.bloky.map((b) => (
+        <div class="panel">
+          {b.stitek ? (
+            <div class="panel__top"><div class="icon"><Icon name={b.ikona} /></div><span class="tag">{b.stitek}</span></div>
+          ) : (
+            <div class="icon"><Icon name={b.ikona} /></div>
+          )}
+          <h3>{b.nadpis}</h3>
+          <p>{b.text}</p>
+          <ul class="checks">{b.body.map((li) => <li>{li}</li>)}</ul>
+        </div>
+      ))}
+    </div>
+    <div class="band">
+      <div>
+        <h3>{sluzby.pruh.nadpis}</h3>
+        <p>{sluzby.pruh.text}</p>
+      </div>
+      <div class="band__links">
+        <a class="btn" href="#poptavka">{sluzby.pruh.tlacitko}</a>
+      </div>
+    </div>
+  </div>
+</section>

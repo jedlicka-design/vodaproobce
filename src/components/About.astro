@@ -1,0 +1,16 @@
+---
+import { oMne } from '../data/obsah';
+// Až bude fotka: uložit do src/assets/portret.jpg a nahradit rámeček takto:
+//   import { Image } from 'astro:assets';
+//   import portret from '../assets/portret.jpg';
+//   <Image class="portrait" src={portret} alt="Ing. Jiří Havíř" width={640} format="webp" />
+---
+<section id="o-mne" class="section">
+  <div class="wrap about">
+    <div class="portrait" aria-hidden="true"></div>
+    <div>
+      <h2>{oMne.nadpis}</h2>
+      {oMne.odstavce.map((p) => <p>{p}</p>)}
+    </div>
+  </div>
+</section>

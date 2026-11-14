@@ -1,0 +1,21 @@
+---
+import { postup } from '../data/obsah';
+---
+<section id="postup" class="section section--mist">
+  <div class="wrap">
+    <div class="head head--stack"><h2>{postup.nadpis}</h2></div>
+    <ol class="steps">
+      {postup.kroky.map((k, i) => (
+        <li class:list={['step', { 'step--first': i === 0 }]}>
+          <div class="step__n" aria-hidden="true">{i + 1}</div>
+          <h3>{k.nadpis}</h3>
+          <p>
+            {k.zvyrazneni && <><strong class="lead-in">{k.zvyrazneni}</strong>{' '}</>}
+            {k.text}
+            {k.zdarma && <>{' '}<span class="free">{k.zdarma}</span></>}
+          </p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

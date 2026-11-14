@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vodaproobce.cz/sitemap-index.xml
