@@ -43,6 +43,6 @@ Dokud je prázdný, formulář místo odeslání ukáže telefon a e-mail. Ochra
 - [ ] portrét (návod v `src/components/About.astro`)
 - [ ] IČO (začátek 2027) → `src/data/web.ts`
 - [ ] text Ochrany osobních údajů → pak odebrat `noindex` a filtr v `astro.config.mjs`
-- [ ] Web3Forms access key
-- [ ] DNS + doména, přesměrování kanalizacebezstarosti.cz
+- [x] Web3Forms access key
+- [x] DNS + doména, přesměrování kanalizacebezstarosti.cz
 - [ ] Google Search Console

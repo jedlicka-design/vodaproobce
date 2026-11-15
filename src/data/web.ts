@@ -14,7 +14,7 @@ export const web = {
   ico: '',
   // Access key z web3forms.com (není tajný, patří do HTML). Dokud je prázdný,
   // formulář místo odeslání ukáže telefon a e-mail.
-  web3formsKey: '',
+  web3formsKey: '21b60fd4-cd98-47bc-8365-565fc6533467',
 };
 
 export const menu = [
