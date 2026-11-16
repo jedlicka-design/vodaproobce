@@ -40,3 +40,17 @@ const fotky = [sachta, plan, kalendar, stocne];
   </div>
 </section>
 
+
+<script>
+  // Klik kamkoli do hlavičky karty rozbalí/sbalí podrobnosti (kromě tlačítka „Vyžádat nabídku").
+  // Pro klávesnici a čtečky slouží <summary> se šipkou dole; bez JS funguje jen šipka.
+  document.querySelectorAll<HTMLElement>('.sluzba__hlava').forEach((h) => {
+    const d = h.closest('.sluzba')?.querySelector('details');
+    if (!d) return;
+    h.classList.add('sluzba__hlava--klik');
+    h.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) return;
+      d.open = !d.open;
+    });
+  });
+</script>

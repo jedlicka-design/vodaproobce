@@ -1,18 +1,78 @@
 ---
 import { kalendar } from '../data/obsah';
 import { url } from '../data/web';
+import { getImage } from 'astro:assets';
+import kanal from '../assets/kalendar-vika.webp';  // čtverec přesně kolem poklopu (střed i poloměr změřené)
+
+// Roční kruh = víko kanálu v ročních obdobích. Leden nahoře, rok běží proti směru hodinových ručiček.
+// Úhel θ (stupně) se měří od 12 hodin proti směru ručiček; měsíc m začíná na θ = m * 30.
+// Rozsahy období jsou orientační (podle názvu období); přesné termíny jsou v PDF.
+const C = 200, R = 146;            // R = poloměr oblouků (kousek uvnitř okraje víka)
+const RF = 166;                    // poloměr fotky víka
+const bod = (theta: number, r: number) => {
+  const a = (theta * Math.PI) / 180;
+  return [C - r * Math.sin(a), C - r * Math.cos(a)].map((n) => +n.toFixed(1));
+};
+const oblouk = (od: number, do_: number, r: number) => {
+  const m = 7; // mezera mezi sousedními oblouky (stupně, kvůli zaobleným koncům)
+  const [x1, y1] = bod(od + m, r), [x2, y2] = bod(do_ - m, r);
+  return `M${x1} ${y1} A${r} ${r} 0 ${do_ - od > 180 ? 1 : 0} 0 ${x2} ${y2}`;
+};
+// Období v pořadí kalendar.obdobi: [od θ, do θ]; null = celý rok (bez oblouku i propojky)
+const rozsahy: ([number, number] | null)[] = [[0, 60], [60, 150], [300, 360], null];
+
+// Propojky: od středu oblouku ven k textu. Texty stojí v rozích kolem kruhu:
+// vlevo nahoře / vlevo dole / vpravo nahoře / vpravo dole → konce propojek na y = 100 / 300.
+const pozice = ['lh', 'ld', 'ph', 'pd'];
+const konec = { lh: [-36, 100], ld: [-36, 300], ph: [436, 100], pd: [436, 300] } as const;
+const propojky = rozsahy.map((r, i) => {
+  if (!r) return null;
+  const [ex, ey] = konec[pozice[i] as keyof typeof konec];
+  const [sx, sy] = bod((r[0] + r[1]) / 2, R);
+  const lom = ex < C ? Math.min(sx - 14, 40) : Math.max(sx + 14, 360);  // svislý zlom před textem
+  return { d: `M${sx} ${sy} L${lom} ${ey} L${ex} ${ey}`, sx, sy };
+});
+
+// Fotka víka: zima nahoře, jaro vlevo, léto dole, podzim vpravo (bez natočení).
+const kanalImg = await getImage({ src: kanal, width: 640, format: 'webp', quality: 72 });
 ---
-<section id="kalendar" class="section">
+<section id="kalendar" class="section kalendar">
   <div class="wrap">
-    <div class="head">
+    <div class="kalendar__head">
       <h2>{kalendar.nadpis}</h2>
       <p class="lead">{kalendar.uvod}</p>
     </div>
-    <div class="year">
-      {kalendar.obdobi.map((o) => (
-        <div class="season"><p class="season__when">{o.kdy}</p><h3>{o.nadpis}</h3><p>{o.text}</p></div>
-      ))}
+
+    <div class="kalendar__kruh">
+      <ol class="obdobi">
+        {kalendar.obdobi.map((o, i) => (
+          <li class={`obdobi__polozka obdobi--${i} obdobi--${pozice[i]}`}>
+            <p class="obdobi__kdy">{o.kdy}</p>
+            <h3>{o.nadpis}</h3>
+            <p class="obdobi__text">{o.text}</p>
+          </li>
+        ))}
+      </ol>
+
+      <div class="cifernik" aria-hidden="true">
+        <svg viewBox="0 0 400 400">
+          <defs><clipPath id="kanal-kruh"><circle cx={C} cy={C} r={RF - 1} /></clipPath></defs>
+          <g class="cifernik__vika" clip-path="url(#kanal-kruh)">
+            <image href={kanalImg.src} x={C - RF} y={C - RF} width={2 * RF} height={2 * RF}
+              preserveAspectRatio="xMidYMid slice" />
+          </g>
+          {propojky.map((p, i) => p && (
+            <g class={`propojka propojka--${i}`}>
+              <path d={p.d} />
+              <circle cx={p.sx} cy={p.sy} r="4.5" />
+            </g>
+          ))}
+          {rozsahy.map((r, i) => r && <path class={`oblouk__obrys oblouk__obrys--${i}`} d={oblouk(r[0], r[1], R)} />)}
+          {rozsahy.map((r, i) => r && <path class={`oblouk oblouk--${i}`} d={oblouk(r[0], r[1], R)} />)}
+        </svg>
+      </div>
     </div>
-    <p class="note">Přesné termíny – co a kdy dodává obec a co zajistí odborný zástupce – najdete v <a href={url('Kalendar_povinnosti_kanalizace.pdf')}><strong>kalendáři povinností (PDF)</strong></a>.</p>
+
+    <p class="kalendar__pozn">Přesné termíny – co a kdy dodává obec a co zajistí odborný zástupce – najdete v <a href={url('Kalendar_povinnosti_kanalizace.pdf')}>kalendáři povinností (PDF)</a>.</p>
   </div>
 </section>

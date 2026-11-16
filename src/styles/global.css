@@ -117,6 +117,7 @@ p{margin:0}
 .sluzba{--pad:clamp(24px,2.8vw,34px);--stin:0 1px 2px rgba(16,44,64,.05),0 10px 28px -14px rgba(16,44,64,.18);
   position:relative;overflow:hidden;background:#fff;border-radius:16px;box-shadow:var(--stin);transition:box-shadow .15s}
 .sluzba__hlava{position:relative;min-height:clamp(262px,calc(560px - 20vw),300px);padding:var(--pad) calc(36% + 8px) 8px var(--pad)}
+.sluzba__hlava--klik{cursor:pointer}
 .sluzba__foto{position:absolute;right:0;top:0;bottom:0;width:36%;display:block}
 .sluzba__foto img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;padding:60px 22px 8px 8px;box-sizing:border-box}
 .sluzba__obsah{position:relative;z-index:1}
@@ -139,7 +140,7 @@ p{margin:0}
 .sluzba__rozbal:focus-visible{outline:3px solid #7cc4ea;outline-offset:-3px}
 @media (hover:hover){
   .sluzba:hover{box-shadow:0 2px 4px rgba(16,44,64,.06),0 18px 40px -16px rgba(16,44,64,.3)}
-  .sluzba__rozbal:hover{background:#eef3f8}
+  .sluzba__rozbal:hover,.sluzba:has(.sluzba__hlava--klik:hover) .sluzba__rozbal{background:#eef3f8}
 }
 @media (max-width:1100px){
   .sluzby__grid{grid-template-columns:1fr}
@@ -151,15 +152,47 @@ p{margin:0}
 .sluzba__body li::before{content:"";position:absolute;left:0;top:.2em;width:18px;height:18px;border-radius:50%;background:var(--h-navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23dbff00' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/12px no-repeat}
 .sluzby__pozn{margin-top:clamp(32px,4vw,48px);font-size:16px;line-height:1.6;color:var(--p-muted);max-width:78ch}
 
-/* Kalendář */
-.year{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;position:relative}
-.year::before{content:"";position:absolute;left:0;right:0;top:9px;height:2px;background:var(--line)}
-.season{position:relative;padding-top:38px}
-.season::before{content:"";position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--blue)}
-.season__when{font:500 22px/1.2 var(--serif);color:var(--blue);margin-bottom:8px}
-.season h3{font-size:18px;margin-bottom:8px}
-.season p{font-size:16px;color:var(--muted)}
-.note{margin-top:44px;font-size:17px}
+/* Kalendář povinností – víko kanálu jako roční kruh, propojky k povinnostem, navy pozadí */
+.kalendar{--wrap:1320px;--k0:var(--lime);--k1:#9fd4f5;--k2:#f7fafc;--k3:#5fa8d3;
+  background:radial-gradient(55% 60% at 50% 58%,rgba(95,168,211,.18),transparent 70%),var(--h-navy);color:var(--h-white)}
+.kalendar__head{text-align:center;max-width:720px;margin:0 auto}
+.kalendar h2{font:800 clamp(36px,4.6vw,56px)/1.05 var(--sans);letter-spacing:-.03em;color:var(--h-white)}
+.kalendar .lead{margin:20px auto 0;color:rgba(247,250,252,.78);max-width:60ch}
+.kalendar__kruh{margin-top:clamp(36px,4vw,56px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px) minmax(0,1fr);
+  grid-template-rows:1fr 1fr;grid-template-areas:"lh dial ph" "ld dial pd";column-gap:clamp(40px,4vw,56px);align-items:center}
+.obdobi{display:contents;list-style:none}
+.cifernik{grid-area:dial}
+.obdobi--lh{grid-area:lh} .obdobi--ld{grid-area:ld} .obdobi--ph{grid-area:ph} .obdobi--pd{grid-area:pd}
+.obdobi__polozka{max-width:330px;transition:opacity .2s}
+.obdobi--lh,.obdobi--ld{text-align:right;justify-self:end}
+.obdobi--0{--k:var(--k0)} .obdobi--1{--k:var(--k1)} .obdobi--2{--k:var(--k2)} .obdobi--3{--k:var(--k3)}
+.obdobi__kdy{font:700 13px/1.2 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--k);margin-bottom:6px}
+.obdobi h3{font:800 clamp(24px,2.2vw,30px)/1.15 var(--sans);letter-spacing:-.015em;color:var(--h-white);margin-bottom:6px}
+.obdobi__text{font-size:15.5px;line-height:1.55;color:rgba(247,250,252,.75)}
+.kalendar__pozn{margin-top:clamp(32px,4vw,48px);text-align:center;font-size:15px;color:rgba(247,250,252,.65)}
+.kalendar__pozn a{color:var(--lime);font-weight:700}
+.kalendar__pozn a:hover{color:#fff}
+/* Kruh */
+.cifernik svg{display:block;width:100%;height:auto;overflow:visible}
+.cifernik__vika{opacity:.72}  /* lehce průhledné víko, ať vyniknou oblouky povinností */
+.oblouk{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-width .2s,opacity .2s}
+.oblouk__obrys{fill:none;stroke:var(--h-navy);stroke-width:18;stroke-linecap:round;transition:opacity .2s,stroke-width .2s}
+.oblouk--0{stroke:var(--k0)} .oblouk--1{stroke:var(--k1)} .oblouk--2{stroke:var(--k2)}
+.propojka{transition:opacity .2s}
+.propojka path{fill:none;stroke-width:1.5;vector-effect:non-scaling-stroke}
+.propojka--0 path{stroke:var(--k0)} .propojka--1 path{stroke:var(--k1)} .propojka--2 path{stroke:var(--k2)} .propojka--3 path{stroke:var(--k3)}
+.propojka--0 circle{fill:var(--k0)} .propojka--1 circle{fill:var(--k1)} .propojka--2 circle{fill:var(--k2)} .propojka--3 circle{fill:var(--k3)}
+.propojka circle{stroke:var(--h-navy);stroke-width:2}
+/* Najetí na povinnost zvýrazní její oblouk a propojku */
+@media (hover:hover){
+  .kalendar:has(.obdobi__polozka:hover) .obdobi__polozka:not(:hover){opacity:.4}
+  .kalendar:has(.obdobi__polozka:hover) :is(.oblouk,.propojka){opacity:.25}
+  .kalendar:has(.obdobi__polozka:hover) .oblouk__obrys{opacity:.25}
+  .kalendar:has(.obdobi--0:hover) :is(.oblouk--0,.propojka--0),.kalendar:has(.obdobi--1:hover) :is(.oblouk--1,.propojka--1),
+  .kalendar:has(.obdobi--2:hover) :is(.oblouk--2,.propojka--2),.kalendar:has(.obdobi--3:hover) .propojka--3{opacity:1}
+  .kalendar:has(.obdobi--0:hover) .oblouk--0,.kalendar:has(.obdobi--1:hover) .oblouk--1,.kalendar:has(.obdobi--2:hover) .oblouk--2{stroke-width:16}
+  .kalendar:has(.obdobi--0:hover) .oblouk__obrys--0,.kalendar:has(.obdobi--1:hover) .oblouk__obrys--1,.kalendar:has(.obdobi--2:hover) .oblouk__obrys--2{opacity:1;stroke-width:22}
+}
 
 /* Ke stažení */
 .downloads{margin:0}
@@ -241,6 +274,10 @@ p{margin:0}
   .nav .nav__cta,.nav .nav__cta:hover{background:none;color:#fff;font-weight:600;border-radius:0;padding:13px 0;border-bottom:0}
 }
 @media (max-width:980px){
+  .kalendar__kruh{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto;grid-template-areas:"dial dial" "lh ph" "ld pd";gap:32px}
+  .propojka{display:none}
+  .cifernik{max-width:420px;width:100%;justify-self:center}
+  .obdobi--lh,.obdobi--ld{text-align:left;justify-self:start}
   .hero__content{grid-template-columns:1fr;padding-top:calc(76px + 36px);padding-bottom:0}
   .hero{min-height:0}
   .hero__cred{position:static;margin-top:24px;align-self:start;max-width:none;width:fit-content;background:rgba(247,250,252,.06)}
@@ -256,11 +293,10 @@ p{margin:0}
   .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
   .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
   .step::after{display:none}
-  .year{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}
-  .year::before{display:none}
   .contact .wrap{grid-template-columns:1fr}
 }
 @media (max-width:720px){
+  .kalendar__kruh{grid-template-columns:1fr;grid-template-areas:"dial" "lh" "ld" "ph" "pd"}
   .sluzby__head,.sluzby__grid{grid-template-columns:1fr}
   .sluzba__hlava{min-height:0;padding:0 var(--pad) 8px}
   .sluzba__foto{position:relative;width:auto;height:160px;margin:0 calc(-1 * var(--pad)) 8px}
@@ -270,10 +306,6 @@ p{margin:0}
   .head,.grid2,.files,.about,.band{grid-template-columns:1fr}
   .grid3,.steps{grid-template-columns:1fr}
   .about .portrait{max-width:260px}
-  .year{grid-template-columns:1fr;gap:0;padding-left:34px}
-  .year::before{display:block;left:9px;right:auto;top:6px;bottom:6px;width:2px;height:auto}
-  .season{padding:0 0 32px}
-  .season::before{left:-34px;top:2px}
   .row2{grid-template-columns:1fr}
   .file{flex-wrap:wrap}
   .file__go{margin-left:72px}
