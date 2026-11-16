@@ -33,6 +33,20 @@ Push do `main` spustí `.github/workflows/deploy.yml` a web se nasadí na GitHub
 - S doménou: vytvořit `public/CNAME` s obsahem `vodaproobce.cz`, nastavit DNS
   a v Settings → Pages vyplnit Custom domain + Enforce HTTPS. Workflow pak staví web pro kořen domény.
 
+## Náhledy před publikováním
+
+Každý branch kromě `main` se automaticky nasadí na Cloudflare Pages (projekt `vodaproobce`, účet Milana)
+jako náhled na `https://<branch>.vodaproobce.pages.dev` s `noindex` (`public/_headers`).
+
+```bash
+git switch -c redesign
+# úpravy, commit
+git push -u origin redesign   # za ~1 min běží https://redesign.vodaproobce.pages.dev
+```
+
+Po schválení sloučit do `main` (ideálně přes PR) – publikuje GitHub Pages na vodaproobce.cz.
+Název branche jen malá písmena, čísla a pomlčky (jinak ho Cloudflare v adrese upraví).
+
 ## Formulář
 
 Odesílá přes [Web3Forms](https://web3forms.com). Access key vložit do `web3formsKey` v `src/data/web.ts`.
