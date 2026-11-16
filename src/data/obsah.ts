@@ -6,7 +6,7 @@ export const sluzby = {
     'Služby jsou určené obcím, které vlastní kanalizaci a provozují ji samy. Nejčastěji jde o jednotnou kanalizaci zaústěnou bez čištění do vodního toku. Pomohu obci nastavit vše, co zákon od provozovatele vyžaduje, a tyto povinnosti dlouhodobě plnit.',
   bloky: [
     {
-      ikona: 'mapa',
+      kdy: 'Na začátku',
       nadpis: 'Vstupní audit a pasport kanalizace',
       text: 'Nejdřív zjistím, co obec má a co chybí. Pak kanalizaci zmapuji a vytvořím pasport, který je podkladem pro všechny další dokumenty.',
       body: [
@@ -18,7 +18,7 @@ export const sluzby = {
       ],
     },
     {
-      ikona: 'schranka',
+      kdy: 'Podle potřeby',
       nadpis: 'Povolení a dokumenty',
       text: 'Vyřídím povolení a připravím dokumenty, které obec jako provozovatel potřebuje mít.',
       body: [
@@ -31,10 +31,10 @@ export const sluzby = {
       ],
     },
     {
-      ikona: 'stit',
-      stitek: 'Každý rok',
+      kdy: 'Každý rok · pevná cena',
+      hlavni: true,
       nadpis: 'Roční balíček služeb',
-      text: 'Podle smlouvy zajistím v termínu každoroční agendu provozovatele, zejména:',
+      text: 'Podle smlouvy zajistím v termínu celou každoroční agendu provozovatele kanalizace.',
       body: [
         'výkon funkce odborného zástupce provozovatele',
         'kontroly sítě, výustí a odlehčovacích komor, provozní deník',
@@ -48,7 +48,7 @@ export const sluzby = {
       ],
     },
     {
-      ikona: 'bublina',
+      kdy: 'Podle potřeby',
       nadpis: 'Stočné a poradenství',
       text: 'Poradím a pomohu tam, kde obec potřebuje rozhodnout nebo chce věci nastavit nově.',
       body: [
@@ -60,7 +60,6 @@ export const sluzby = {
     },
   ],
   pruh: {
-    nadpis: 'Roční balíček a služby podle potřeby',
     text: 'Povinnosti, které se každý rok opakují, zajistím v rámci balíčku za pevnou cenu. Ostatní služby, například poplatkové přiznání k poplatku za vypouštění odpadních vod do vod povrchových, jen tehdy, když je obec potřebuje. Cenovou nabídku připravím na míru.',
     tlacitko: 'Vyžádat nabídku',
   },

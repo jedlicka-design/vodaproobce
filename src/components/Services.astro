@@ -1,35 +1,42 @@
 ---
-import Icon from './Icon.astro';
+import { Picture } from 'astro:assets';
 import { sluzby } from '../data/obsah';
+import sachta from '../assets/sluzba-vyrez-sachta.webp';
+import plan from '../assets/sluzba-vyrez-plan.webp';
+import kalendar from '../assets/sluzba-vyrez-kalendar.webp';
+import stocne from '../assets/sluzba-vyrez-stocne.webp';
+// Obrázky karet (předměty na průhledném pozadí) ve stejném pořadí jako sluzby.bloky.
+const fotky = [sachta, plan, kalendar, stocne];
 ---
-<section id="sluzby" class="section">
+<section id="sluzby" class="section sluzby">
   <div class="wrap">
-    <div class="head">
+    <div class="sluzby__head">
       <h2>{sluzby.nadpis}</h2>
       <p class="lead">{sluzby.uvod}</p>
     </div>
-    <div class="grid2">
-      {sluzby.bloky.map((b) => (
-        <div class="panel">
-          {b.stitek ? (
-            <div class="panel__top"><div class="icon"><Icon name={b.ikona} /></div><span class="tag">{b.stitek}</span></div>
-          ) : (
-            <div class="icon"><Icon name={b.ikona} /></div>
-          )}
-          <h3>{b.nadpis}</h3>
-          <p>{b.text}</p>
-          <ul class="checks">{b.body.map((li) => <li>{li}</li>)}</ul>
-        </div>
+
+    <div class="sluzby__grid">
+      {sluzby.bloky.map((b, i) => (
+        <article class:list={['sluzba', { 'sluzba--hlavni': b.hlavni }]}>
+          <div class="sluzba__hlava">
+            <Picture pictureAttributes={{ class: 'sluzba__foto' }} src={fotky[i]} alt="" formats={['avif', 'webp']} fallbackFormat="webp"
+              widths={[480, 820]} sizes="(max-width: 720px) 100vw, 640px" loading="lazy" />
+            <div class="sluzba__obsah">
+              <h3>{b.nadpis}</h3>
+              <p class="sluzba__text">{b.text}</p>
+              <a class="sluzba__cta" href="#poptavka">{sluzby.pruh.tlacitko}</a>
+            </div>
+            <span class="sluzba__kdy">{b.kdy}</span>
+          </div>
+          <details class="sluzba__detail">
+            <summary class="sluzba__rozbal"><span class="sr-only">Co zahrnuje: {b.nadpis}</span></summary>
+            <ul class="sluzba__body">{b.body.map((li) => <li>{li}</li>)}</ul>
+          </details>
+        </article>
       ))}
     </div>
-    <div class="band">
-      <div>
-        <h3>{sluzby.pruh.nadpis}</h3>
-        <p>{sluzby.pruh.text}</p>
-      </div>
-      <div class="band__links">
-        <a class="btn" href="#poptavka">{sluzby.pruh.tlacitko}</a>
-      </div>
-    </div>
+
+    <p class="sluzby__pozn">{sluzby.pruh.text}</p>
   </div>
 </section>
+

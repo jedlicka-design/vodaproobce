@@ -1,4 +1,6 @@
 :root{
+  /* Nová paleta (redesign): Midnight Navy, Cloud White, Electric Lime */
+  --h-navy:#102c40; --h-white:#f7fafc; --lime:#dbff00; --p-line:#dbe3ea; --p-muted:#4f5f6b;
   --navy:#0f3550; --navy-deep:#0b2739; --blue:#1f6f9f; --green:#2c9a7a;
   --sky:#e7f1f8; --mist:#f5f8fa; --ink:#1c2730; --muted:#4a5964; --line:#d6e1e9;
   --serif:'Source Serif 4 Variable', Georgia, serif; --sans:'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -103,34 +105,51 @@ p{margin:0}
 .popisek__stitek{transform:scale(1.35);transform-box:fill-box;transform-origin:center}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
-/* Služby */
-.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.svc{background:#fff;padding:32px 30px 34px}
-.icon{width:48px;height:48px;border-radius:12px;background:var(--sky);display:grid;place-items:center;margin-bottom:20px}
-.icon svg{width:26px;height:26px}
-.svc h3{margin-bottom:8px}
-.svc p{font-size:16px;color:var(--muted)}
+/* Služby – bezpatkové písmo a paleta z hero */
+.sluzby{--wrap:1320px;background:var(--h-white);color:var(--h-navy)}
+.sluzby h2{font:800 clamp(36px,4.6vw,56px)/1.05 var(--sans);letter-spacing:-.03em;color:var(--h-navy)}
+.sluzby__head{max-width:760px;margin-bottom:clamp(40px,5vw,60px)}
+.sluzby .lead{margin-top:20px;color:var(--p-muted);max-width:62ch}
+.sluzby__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;align-items:start}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-/* Pruh paušál */
-.band{margin-top:clamp(48px,6vw,72px);background:var(--navy);color:#fff;border-radius:10px;padding:clamp(32px,4vw,48px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px 56px;align-items:center}
-.band h3{color:#fff;font:600 clamp(24px,2.6vw,30px)/1.2 var(--serif);margin-bottom:10px}
-.band p{color:#d3e0ea;font-size:17px;max-width:60ch}
-.band__links{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
-.btn{display:inline-block;background:#fff;color:var(--navy);font-weight:600;font-size:16px;text-decoration:none;border-radius:6px;padding:14px 26px}
-.btn:hover{background:var(--sky);color:var(--navy)}
-.band__links a:not(.btn){color:#d3e0ea;font-size:15px}
-
-/* Podrobně */
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
-.panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:clamp(28px,3vw,40px)}
-.panel--key{border-color:var(--blue);box-shadow:inset 0 4px 0 var(--blue)}
-.panel h3{font-size:22px;margin-bottom:10px}
-.panel>p{font-size:16px;color:var(--muted);margin-bottom:20px}
-.checks{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:16px}
-.checks li{position:relative;padding-left:30px}
-.checks li::before{content:"";position:absolute;left:0;top:.3em;width:18px;height:18px;border-radius:50%;background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/12px no-repeat}
-.panel__top{display:flex;align-items:center;justify-content:space-between}.panel__top .tag{margin:0 0 20px}
-.tag{display:inline-block;font-size:13px;font-weight:600;color:var(--green);background:#e4f4ee;border-radius:20px;padding:3px 12px;margin-bottom:14px}
+/* Karta: hlavička (text vlevo, obrázek vpravo), pod ní pruh se šipkou, který rozbalí podrobnosti */
+.sluzba{--pad:clamp(24px,2.8vw,34px);--stin:0 1px 2px rgba(16,44,64,.05),0 10px 28px -14px rgba(16,44,64,.18);
+  position:relative;overflow:hidden;background:#fff;border-radius:16px;box-shadow:var(--stin);transition:box-shadow .15s}
+.sluzba__hlava{position:relative;min-height:clamp(262px,calc(560px - 20vw),300px);padding:var(--pad) calc(36% + 8px) 8px var(--pad)}
+.sluzba__foto{position:absolute;right:0;top:0;bottom:0;width:36%;display:block}
+.sluzba__foto img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;padding:60px 22px 8px 8px;box-sizing:border-box}
+.sluzba__obsah{position:relative;z-index:1}
+.sluzba h3{font:800 clamp(24px,2.3vw,30px)/1.15 var(--sans);letter-spacing:-.02em;color:var(--h-navy);margin-bottom:12px}
+.sluzba__text{font-size:16px;line-height:1.6;color:var(--p-muted)}
+.sluzba__cta{display:inline-flex;align-items:center;margin-top:20px;padding:11px 18px;border-radius:6px;font:600 15px/1 var(--sans);color:var(--h-navy);text-decoration:none;
+  box-shadow:inset 0 0 0 1.5px var(--h-navy);transition:background .15s,color .15s}
+.sluzba__cta:hover{background:var(--h-navy);color:#fff}
+/* Kdy se služba dělá: štítek vpravo nahoře nad obrázkem */
+.sluzba__kdy{position:absolute;z-index:2;top:clamp(18px,2vw,24px);right:clamp(18px,2vw,24px);padding:6px 12px;border-radius:999px;
+  background:#e3eef8;color:var(--h-navy);font:700 13px/1.2 var(--sans);letter-spacing:.01em;white-space:nowrap}
+/* Hlavní služba: limetkový pruh dole a limetkový štítek */
+.sluzba--hlavni::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--lime);z-index:3;pointer-events:none}
+.sluzba--hlavni .sluzba__kdy{background:var(--lime);color:var(--h-navy)}
+/* Pruh se šipkou dole uprostřed */
+.sluzba__rozbal{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;height:44px;transition:background .15s}
+.sluzba__rozbal::-webkit-details-marker{display:none}
+.sluzba__rozbal::before{content:"";width:12px;height:12px;border-right:2px solid var(--h-navy);border-bottom:2px solid var(--h-navy);transform:translateY(-3px) rotate(45deg);transition:transform .2s}
+.sluzba__detail[open] .sluzba__rozbal::before{transform:translateY(3px) rotate(-135deg)}
+.sluzba__rozbal:focus-visible{outline:3px solid #7cc4ea;outline-offset:-3px}
+@media (hover:hover){
+  .sluzba:hover{box-shadow:0 2px 4px rgba(16,44,64,.06),0 18px 40px -16px rgba(16,44,64,.3)}
+  .sluzba__rozbal:hover{background:#eef3f8}
+}
+@media (max-width:1100px){
+  .sluzby__grid{grid-template-columns:1fr}
+  .sluzba__hlava{min-height:220px}
+}
+/* Body po rozbalení: v barevném poli */
+.sluzba__body{list-style:none;margin:0;padding:clamp(20px,2.4vw,28px) var(--pad) clamp(26px,3vw,34px);background:#eaf1f7;display:grid;gap:10px;font-size:15.5px;line-height:1.5;color:var(--h-navy)}
+.sluzba__body li{position:relative;padding-left:28px}
+.sluzba__body li::before{content:"";position:absolute;left:0;top:.2em;width:18px;height:18px;border-radius:50%;background:var(--h-navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23dbff00' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/12px no-repeat}
+.sluzby__pozn{margin-top:clamp(32px,4vw,48px);font-size:16px;line-height:1.6;color:var(--p-muted);max-width:78ch}
 
 /* Kalendář */
 .year{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;position:relative}
@@ -242,6 +261,10 @@ p{margin:0}
   .contact .wrap{grid-template-columns:1fr}
 }
 @media (max-width:720px){
+  .sluzby__head,.sluzby__grid{grid-template-columns:1fr}
+  .sluzba__hlava{min-height:0;padding:0 var(--pad) 8px}
+  .sluzba__foto{position:relative;width:auto;height:160px;margin:0 calc(-1 * var(--pad)) 8px}
+  .sluzba__foto img{padding:14px 24px 0}
   body{font-size:17px}
   .brand__person{display:none}
   .head,.grid2,.files,.about,.band{grid-template-columns:1fr}
