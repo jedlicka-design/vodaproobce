@@ -1,0 +1,7 @@
+# Cloudflare Pages (preview deployments only). GitHub Pages ignores this file.
+# Keep *.pages.dev copies out of search engines; production is vodaproobce.cz.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
