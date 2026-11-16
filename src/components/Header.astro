@@ -6,12 +6,11 @@ interface Props { home?: boolean }
 const { home = true } = Astro.props;
 const prefix = home ? '' : url();
 ---
-<header class="top">
+<header class:list={['top', { 'top--over': home }]}>
   <div class="wrap">
     <a class="brand" href={`${prefix}#uvod`} aria-label={`${web.nazev} – ${web.osoba}, úvod`}>
       <Logo />
       <span class="brand__name">{web.nazev}</span>
-      <span class="brand__person">{web.osoba}</span>
     </a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
     <nav class="nav" id="menu" aria-label="Hlavní menu">
@@ -23,6 +22,14 @@ const prefix = home ? '' : url();
 <script>
   const b = document.querySelector<HTMLButtonElement>('.menu-btn');
   const n = document.getElementById('menu');
+  // Na úvodní stránce je hlavička průhledná přes hero, pozadí dostane po odscrollování nebo s otevřeným menu.
+  const top = document.querySelector<HTMLElement>('.top--over');
+  if (top) {
+    const solid = () => top.classList.toggle('is-solid', scrollY > 24 || !!n?.classList.contains('open'));
+    solid();
+    addEventListener('scroll', solid, { passive: true });
+    b?.addEventListener('click', () => requestAnimationFrame(solid));
+  }
   if (b && n) {
     const close = () => { n.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); b.textContent = 'Menu'; };
     b.addEventListener('click', () => {

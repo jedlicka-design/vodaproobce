@@ -1,42 +1,152 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { web } from '../data/web';
+import obec from '../assets/hero-obec.webp';
+import lide from '../assets/hero-jirka-starosta.webp';
+
+// Technický výkres sítě přes fotku. Souřadnice jsou v pixelech fotky (2000 × 667);
+// fotka i SVG sdílejí stejný „canvas", takže kresba sedí na silnici v každé šířce okna.
+
+// Osa silnice (povrch terénu) odečtená z fotky.
+const road = [[0, 278], [250, 290], [500, 316], [750, 321], [1000, 324], [1250, 327], [1450, 327], [1560, 326]];
+const roadY = (x: number) => {
+  for (let i = 1; i < road.length; i++) {
+    const [x0, y0] = road[i - 1], [x1, y1] = road[i];
+    if (x <= x1) return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
+  }
+  return road[road.length - 1][1];
+};
+const DEPTH = 74; // hloubka osy stoky pod povrchem
+const pipeY = (x: number) => roadY(x) + DEPTH;
+const pts = (a: number[][]) => a.map(([x, y]) => `${x},${y.toFixed(1)}`).join(' ');
+
+// Stoka pod silnicí, na konci vyúsťuje do rybníka.
+const stoka = pts([...road.map(([x]) => [x, pipeY(x)]), [1612, 401]]);
+
+// Šachty jako válce: přední hrana dna plně, zadní (skrytá) čárkovaně.
+const R = 14, RY = 4.5;
+const sachty = [250, 640, 1060, 1450].map((x) => {
+  const top = roadY(x), bot = pipeY(x);
+  return {
+    x, top,
+    boky: `M${x - R} ${top} V${bot} M${x + R} ${top} V${bot}`,
+    dnoPredni: `M${x - R} ${bot} A${R} ${RY} 0 0 0 ${x + R} ${bot}`,
+    dnoZadni: `M${x - R} ${bot} A${R} ${RY} 0 0 1 ${x + R} ${bot}`,
+    poklop: `M${x - 8} ${top} h16 M${x} ${top - 3} v6`,
+  };
+});
+
+// Přípojky: výstup z domu u základů → spád pod zahradou → revizní šachtička
+// u hranice pozemku → odbočka šikmo shora do stoky. [x, y paty domu]
+const domy = [[180, 266], [370, 281], [560, 291], [755, 296], [950, 299], [1165, 306], [1378, 309], [1490, 284]];
+const pripojky = domy.map(([x, y]) => {
+  const ex = x + 4, ey = y + 3;            // výstup z domu
+  const rx = x + 12, ry = roadY(x) - 7;    // revizní šachtička
+  const jx = x + 46, jy = pipeY(jx) - 6;   // napojení na horní obrys stoky
+  const bx = jx - 14, by = jy - 12;        // začátek odbočky (45°)
+  return {
+    ex, ey, rx, ry,
+    d: `M${ex} ${ey} L${rx} ${(ry - 6).toFixed(1)} M${rx} ${(ry + 5).toFixed(1)} L${bx} ${by.toFixed(1)} L${jx} ${jy.toFixed(1)}`,
+    revize: `M${rx - 4} ${(ry - 7).toFixed(1)} v12 M${rx + 4} ${(ry - 7).toFixed(1)} v12`,
+  };
+});
+
+// Kóta hloubky u šachty 1060.
+const kx = 1060;
+const kota = `M${kx} ${roadY(kx)} H${kx - 50} M${kx} ${pipeY(kx)} H${kx - 50} M${kx - 42} ${roadY(kx)} V${pipeY(kx)}`
+  + ` M${kx - 46} ${roadY(kx) + 8} l4 -8 l4 8 M${kx - 46} ${pipeY(kx) - 8} l4 8 l4 -8`;
+
+// Popisky ve štítcích: bod na prvku (ax, ay) → vodítko → štítek (lx, ly).
+// Desktop: lidé stojí vpravo, popisky jsou v levé části vesnice. Mobil: lidé vlevo, popisky vpravo.
+const mid = (q: (typeof pripojky)[number]) => ({ ax: (q.ex + q.rx) / 2, ay: (q.ey + q.ry - 6) / 2 });
+type Popisek = { t: string; ax: number; ay: number; lx: number; ly: number; anchor: string; bezVoditka?: boolean; kde: 'desktop' | 'mobil' };
+const popisky = ([
+  { kde: 'desktop', t: 'přípojka', ax: 777, ay: 348, lx: 760, ly: pipeY(760) + 44, anchor: 'middle' },
+  { kde: 'desktop', t: 'šachta', ax: 250, ay: pipeY(250) + 12, lx: 250, ly: pipeY(250) + 52, anchor: 'middle' },
+  { kde: 'desktop', t: 'stoka', ax: 470, ay: pipeY(470) + 8, lx: 470, ly: pipeY(470) + 40, anchor: 'middle' },
+  { kde: 'mobil', t: 'přípojka', ...mid(pripojky[7]), lx: 1546, ly: 262, anchor: 'start' },
+  { kde: 'mobil', t: 'výusť', ax: 1626, ay: 420, lx: 1650, ly: 462, anchor: 'start' },
+  { kde: 'mobil', t: 'rybník', ax: 1730, ay: 392, lx: 1730, ly: 392, anchor: 'middle', bezVoditka: true },
+] as Popisek[]).map((i) => {
+  const w = i.t.length * 8.6 + 18, h = 24;
+  const x0 = i.anchor === 'end' ? i.lx - w : i.anchor === 'middle' ? i.lx - w / 2 : i.lx;
+  const y0 = i.bezVoditka ? i.ly - h / 2 : i.ly > i.ay ? i.ly : i.ly - h;
+  return { ...i, w, h, x0, y0 };
+});
+---
 <section id="uvod" class="hero">
-  <div class="wrap">
-    <h1>Kanalizace bez starostí</h1>
-    <p class="hero__sub">Odborné zastoupení provozovatele kanalizace, poradenství, evidence, hlášení a povolení pro obce. Převezmu agendu – vy se můžete věnovat obci.</p>
-    <p class="hero__cred">20 let praxe v provozování kanalizací a čistíren odpadních vod</p>
+  <div class="wrap hero__content">
+    <h1>Kanalizace<br /><span>bez starostí</span></h1>
+    <div class="hero__side">
+      <p class="hero__sub">Odborné zastoupení provozovatele kanalizace, poradenství, evidence, hlášení a povolení pro obce. Převezmu agendu – vy se můžete věnovat obci.</p>
+      <p class="hero__cred"><b>20 let</b> <span>praxe v provozování kanalizací <br />a čistíren odpadních vod</span></p>
+      <p class="hero__jmeno">{web.osoba}</p>
+      <div class="hero__cta">
+        <a class="hbtn hbtn--lime" href={web.telefonHref}><Icon name="telefon" color="#102c40" />{web.telefon}</a>
+        <a class="hbtn hbtn--ghost" href="#kontakt">Konzultace zdarma</a>
+      </div>
+    </div>
   </div>
-  <div class="scene">
-    <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Řez obcí: domy, přípojky, stoka se šachtami a výusť do potoka">
-      <!-- terén -->
-      <path d="M0 132 C180 124 360 140 560 132 S860 126 960 150 C990 182 1010 196 1060 196 C1110 196 1130 178 1160 152 L1200 144 L1200 300 L0 300 Z" fill="#e7f1f8"/>
-      <path d="M0 132 C180 124 360 140 560 132 S860 126 960 150 C990 182 1010 196 1060 196 C1110 196 1130 178 1160 152 L1200 144" fill="none" stroke="#0f3550" stroke-width="1.6"/>
-      <!-- potok -->
-      <path d="M993 182 L1127 182 C1115 192 1095 196 1060 196 C1025 196 1005 192 993 182 Z" fill="#9fc6de"/>
-      <!-- domy -->
-      <g fill="#fff" stroke="#0f3550" stroke-width="1.6" stroke-linejoin="round">
-        <path d="M80 132 L80 98 L110 76 L140 98 L140 132 Z"/><path d="M190 134 L190 94 L224 70 L258 94 L258 134 Z"/>
-        <path d="M310 136 L310 102 L338 82 L366 102 L366 136 Z"/><path d="M430 134 L430 92 L466 68 L502 92 L502 134 Z"/>
-        <path d="M560 132 L560 100 L588 80 L616 100 L616 132 Z"/><path d="M700 130 L700 94 L732 72 L764 94 L764 130 Z"/>
-      </g>
-      <g fill="none" stroke="#0f3550" stroke-width="1.2"><rect x="104" y="110" width="12" height="22"/><rect x="218" y="112" width="12" height="22"/><rect x="332" y="114" width="12" height="22"/><rect x="460" y="112" width="12" height="22"/><rect x="582" y="110" width="12" height="22"/><rect x="726" y="108" width="12" height="22"/></g>
-      <!-- přípojky -->
-      <g stroke="#5f8fb0" stroke-width="1.3" stroke-dasharray="4 4"><line x1="110" y1="134" x2="110" y2="165"/><line x1="224" y1="136" x2="224" y2="167"/><line x1="338" y1="138" x2="338" y2="168"/><line x1="466" y1="136" x2="466" y2="169"/><line x1="588" y1="134" x2="588" y2="170"/><line x1="732" y1="132" x2="732" y2="171"/></g>
-      <!-- stoka -->
-      <path d="M40 162 L996 172 L996 180 L40 170 Z" fill="#1f6f9f"/>
-      <path class="flow" d="M44 166 L992 176" stroke="#bfe0f3" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      <!-- šachty -->
-      <g fill="#fff" stroke="#0f3550" stroke-width="1.4"><rect x="274" y="134" width="16" height="32"/><rect x="646" y="132" width="16" height="37"/><rect x="874" y="134" width="16" height="36"/></g>
-      <g stroke="#0f3550" stroke-width="2.4"><line x1="270" y1="134" x2="294" y2="134"/><line x1="642" y1="132" x2="666" y2="132"/><line x1="870" y1="134" x2="894" y2="134"/></g>
-      <!-- výusť -->
-      <rect x="992" y="162" width="8" height="24" fill="#e7f1f8" stroke="#0f3550" stroke-width="1.4"/>
-      <path d="M1000 176.5 q4 0.5 5.5 5.5" fill="none" stroke="#9fc6de" stroke-width="2.4" stroke-linecap="round"/>
-      <g fill="none" stroke="#5f8fb0" stroke-width="1.2" stroke-linecap="round"><path d="M1020 188 q8 -3 16 0 t16 0"/><path d="M1066 188 q8 -3 16 0 t16 0"/></g>
-      <!-- stromy -->
-      <g stroke="#a9c4d8" stroke-width="1.6" fill="#fff"><line x1="1150" y1="154" x2="1150" y2="122"/><circle cx="1150" cy="110" r="16"/><line x1="1182" y1="148" x2="1182" y2="120"/><circle cx="1182" cy="106" r="13"/><line x1="944" y1="144" x2="944" y2="114"/><circle cx="944" cy="100" r="15"/></g>
-      <!-- popisky -->
-      <g font-family="Inter Variable, Inter, sans-serif" font-size="13" fill="#3e5566">
-        <text x="120" y="154">přípojky</text><text x="420" y="200">stoka</text>
-        <text x="902" y="158">šachta</text><text x="958" y="206">výusť</text><text x="1046" y="214">potok</text>
-      </g>
-    </svg>
+
+  <div class="hero__media" aria-hidden="true">
+    <div class="hero__canvas">
+      <Picture src={obec} alt="" formats={['avif', 'webp']} fallbackFormat="webp" widths={[1000, 1500, 2000]}
+        sizes="(max-width: 980px) 1600px, 190vw" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="hero__shade"></div>
+    <div class="hero__canvas">
+      <svg class="vykres" viewBox="0 0 2000 667" preserveAspectRatio="none">
+        <!-- přípojky -->
+        {pripojky.map((q) => (
+          <g>
+            <path class="cara" d={q.d} />
+            <path class="cara" d={q.revize} />
+            <ellipse class="cara" cx={q.rx} cy={q.ry - 7} rx="4" ry="1.4" />
+            <circle class="bod" cx={q.ex} cy={q.ey} r="2.2" />
+          </g>
+        ))}
+
+        <!-- stoka: dva obrysy trouby a osa -->
+        <polyline class="cara" points={stoka} transform="translate(0 -6)" />
+        <polyline class="cara" points={stoka} transform="translate(0 6)" />
+        <polyline class="cara cara--osa" points={stoka} />
+
+        <!-- šachty -->
+        {sachty.map((s) => (
+          <g>
+            <path class="cara" d={s.boky} />
+            <path class="cara" d={s.dnoPredni} />
+            <path class="cara cara--skryta" d={s.dnoZadni} />
+            <ellipse class="cara" cx={s.x} cy={s.top} rx={R} ry={RY} />
+            <path class="cara cara--slaba" d={s.poklop} />
+          </g>
+        ))}
+
+        <!-- výusť -->
+        <path class="cara" d="M1604 388 l20 4 v26 l-20 -4z" />
+        <path class="cara" d="M1626 400 q12 2 16 9" />
+
+        <!-- kóta hloubky -->
+        <path class="cara cara--kota" d={kota} />
+
+        <!-- popisky ve štítcích -->
+        {popisky.map((i) => (
+          <g class={`popisek popisek--${i.kde}`}>
+            {!i.bezVoditka && <path class="popisek__voditko" d={`M${i.ax} ${i.ay} L${i.lx} ${i.ly}`} />}
+            {!i.bezVoditka && <circle class="popisek__bod" cx={i.ax} cy={i.ay} r="2.6" />}
+            <g class="popisek__stitek">
+              <rect x={i.x0} y={i.y0} width={i.w} height={i.h} rx="12" />
+              <text x={i.x0 + i.w / 2} y={i.y0 + 16.5} text-anchor="middle">{i.t}</text>
+            </g>
+          </g>
+        ))}
+      </svg>
+    </div>
+  </div>
+
+  <div class="hero__lide">
+    <Picture src={lide} alt="" formats={['avif', 'webp']} fallbackFormat="webp" widths={[480, 800, 1200]}
+      sizes="(max-width: 980px) 80vw, 46vw" loading="eager" />
   </div>
 </section>
