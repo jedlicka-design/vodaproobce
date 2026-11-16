@@ -11,6 +11,8 @@ const base = process.env.BASE_PATH || '/';
 export default defineConfig({
   site,
   base,
+  // Vlastní port, ať se nepere s jinými Astro projekty na 4321 (cache přesměrování v prohlížeči).
+  server: { port: 4322 },
   trailingSlash: 'ignore',
   integrations: [
     // Ochranu osobních údajů do sitemapy přidat, až bude hotový její text.

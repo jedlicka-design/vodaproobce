@@ -6,7 +6,7 @@ Web Ing. Jiřího Havíře – odborný zástupce kanalizace pro obce. Astro, st
 
 ```bash
 npm install
-npm run dev      # http://localhost:4321
+npm run dev      # http://localhost:4322
 npm run build    # výstup do dist/
 ```
 
