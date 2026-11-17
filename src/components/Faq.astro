@@ -1,12 +1,31 @@
 ---
+import Icon from './Icon.astro';
 import { dotazy } from '../data/obsah';
+import { web } from '../data/web';
+// Rychlá odpověď: když odpověď začíná krátkým „Ano." / „Nemusí." apod., ukážeme ho jako štítek
+// už u zavřené otázky (pro čtečky skrytý, celá odpověď zůstává beze změny).
+const rychla = (o: string) => o.match(/^(Ano|Ne|Nemusí|Musí)\./)?.[1];
 ---
-<section id="dotazy" class="section section--mist">
-  <div class="wrap head faq-wrap">
-    <h2>{dotazy.nadpis}</h2>
-    <div class="faq">
+<section id="dotazy" class="section dotazy">
+  <div class="wrap dotazy__wrap">
+    <div class="dotazy__bok">
+      <h2>{dotazy.nadpis}</h2>
+      <div class="dotazy__kontakt">
+        <p>Nenašli jste odpověď?</p>
+        <a class="dotazy__tel" href={web.telefonHref}><Icon name="telefon" color="#102c40" />{web.telefon}</a>
+        <a class="dotazy__cta" href="#kontakt">Konzultace zdarma</a>
+      </div>
+    </div>
+    <div class="dotazy__seznam">
       {dotazy.polozky.map((d) => (
-        <details><summary>{d.otazka}</summary><p>{d.odpoved}</p></details>
+        <details class="dotaz">
+          <summary>
+            <span class="dotaz__otazka">{d.otazka}</span>
+            {rychla(d.odpoved) && <span class="dotaz__rychla" aria-hidden="true">{rychla(d.odpoved)}</span>}
+            <span class="dotaz__sipka" aria-hidden="true"></span>
+          </summary>
+          <p class="dotaz__odpoved">{d.odpoved}</p>
+        </details>
       ))}
     </div>
   </div>

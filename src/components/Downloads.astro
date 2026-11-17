@@ -1,21 +1,32 @@
 ---
-import Icon from './Icon.astro';
+import { Picture } from 'astro:assets';
 import { keStazeni } from '../data/obsah';
 import { url } from '../data/web';
+import letak from '../assets/dokument-letak.webp';
+import kalendar from '../assets/dokument-kalendar.webp';
+// Obrázky podle souboru; popis „… · PDF, 1 strana" rozdělíme na text a štítek vpravo nahoře.
+const obrazky: Record<string, ImageMetadata> = { 'Letak_sluzby_web.pdf': letak, 'Kalendar_povinnosti_kanalizace.pdf': kalendar };
+const rozdel = (popis: string) => { const [text, meta] = popis.split(' · '); return { text, meta }; };
 ---
-<section id="ke-stazeni" class="section">
+<section id="ke-stazeni" class="section stazeni">
   <div class="wrap">
-    <div class="downloads">
-      <h2>{keStazeni.nadpis}</h2>
-      <div class="files">
-        {keStazeni.soubory.map((f) => (
-          <a class="file" href={url(f.soubor)} download>
-            <span class="file__ico"><Icon name={f.ikona} /></span>
-            <span><span class="file__t">{f.nazev}</span><span class="file__d">{f.popis}</span></span>
-            <span class="file__go">Stáhnout</span>
+    <h2>{keStazeni.nadpis}</h2>
+    <div class="stazeni__grid">
+      {keStazeni.soubory.map((f) => {
+        const { text, meta } = rozdel(f.popis);
+        return (
+          <a class="dokument" href={url(f.soubor)} download>
+            <Picture pictureAttributes={{ class: 'dokument__foto' }} src={obrazky[f.soubor]} alt="" formats={['avif', 'webp']} fallbackFormat="webp"
+              widths={[400, 720]} sizes="(max-width: 720px) 90vw, 360px" loading="lazy" />
+            <span class="dokument__obsah">
+              <span class="dokument__nazev">{f.nazev}</span>
+              <span class="dokument__text">{text}</span>
+              <span class="dokument__cta">Stáhnout</span>
+            </span>
+            {meta && <span class="dokument__meta">{meta}</span>}
           </a>
-        ))}
-      </div>
+        );
+      })}
     </div>
   </div>
 </section>

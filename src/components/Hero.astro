@@ -2,11 +2,13 @@
 import { Picture } from 'astro:assets';
 import Icon from './Icon.astro';
 import { web } from '../data/web';
-import obec from '../assets/hero-obec.webp';
+import obec from '../assets/hero-obec-vysoka.webp';
 import lide from '../assets/hero-jirka-starosta.webp';
 
-// Technický výkres sítě přes fotku. Souřadnice jsou v pixelech fotky (2000 × 667);
-// fotka i SVG sdílejí stejný „canvas", takže kresba sedí na silnici v každé šířce okna.
+// Technický výkres sítě přes fotku. Fotka má 2000 × 1133 px; souřadnice kresby jsou v pixelech
+// jejího spodního pásu 2000 × 667 (y = 0 je 466 px od horního okraje, viewBox proto začíná na -466).
+// Fotka i SVG sdílejí stejný „canvas" ukotvený zdola, takže kresba sedí na silnici v každé šířce okna
+// a nebe nad vesnicí jen doplňuje místo nahoře.
 
 // Osa silnice (povrch terénu) odečtená z fotky.
 const road = [[0, 278], [250, 290], [500, 316], [750, 321], [1000, 324], [1250, 327], [1450, 327], [1560, 326]];
@@ -96,7 +98,7 @@ const popisky = ([
     </div>
     <div class="hero__shade"></div>
     <div class="hero__canvas">
-      <svg class="vykres" viewBox="0 0 2000 667" preserveAspectRatio="none">
+      <svg class="vykres" viewBox="0 -466 2000 1133" preserveAspectRatio="none">
         <!-- přípojky -->
         {pripojky.map((q) => (
           <g>

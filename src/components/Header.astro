@@ -25,10 +25,38 @@ const prefix = home ? '' : url();
   // Na úvodní stránce je hlavička průhledná přes hero, pozadí dostane po odscrollování nebo s otevřeným menu.
   const top = document.querySelector<HTMLElement>('.top--over');
   if (top) {
-    const solid = () => top.classList.toggle('is-solid', scrollY > 24 || !!n?.classList.contains('open'));
+    // Pod hero sekcí přepneme lištu na světlou (is-light).
+    const hero = document.getElementById('uvod');
+    const solid = () => {
+      top.classList.toggle('is-solid', scrollY > 24 || !!n?.classList.contains('open'));
+      top.classList.toggle('is-light', !!hero && hero.getBoundingClientRect().bottom <= top.offsetHeight);
+    };
     solid();
     addEventListener('scroll', solid, { passive: true });
     b?.addEventListener('click', () => requestAnimationFrame(solid));
+  }
+  // Aktuální sekce: odkaz v menu na sekci, jejíž horní okraj je nejblíž pod hlavičkou, dostane aria-current.
+  // Na podstránkách (odkazy s cestou před #) se nic nevyznačuje.
+  const odkazy = [...document.querySelectorAll<HTMLAnchorElement>('.nav a[href^="#"]')]
+    .map((a) => ({ a, s: document.getElementById(a.hash.slice(1)) }))
+    .filter((o): o is { a: HTMLAnchorElement; s: HTMLElement } => !!o.s);
+  if (odkazy.length) {
+    let ceka = false;
+    const oznac = () => {
+      ceka = false;
+      const hranice = Math.max(120, innerHeight * 0.3);  // sekce je aktuální, jakmile zabere horní třetinu okna
+      const naKonci = innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
+      // Nejníže položená sekce, která už dojela pod hlavičku (na konci stránky ta úplně poslední).
+      let akt: HTMLAnchorElement | undefined, nej = -Infinity;
+      for (const o of odkazy) {
+        const t = o.s.getBoundingClientRect().top;
+        if ((naKonci || t <= hranice) && t > nej) { nej = t; akt = o.a; }
+      }
+      for (const o of odkazy) o.a === akt ? o.a.setAttribute('aria-current', 'location') : o.a.removeAttribute('aria-current');
+    };
+    oznac();
+    addEventListener('scroll', () => { if (!ceka) { ceka = true; requestAnimationFrame(oznac); } }, { passive: true });
+    addEventListener('resize', oznac);
   }
   if (b && n) {
     const close = () => { n.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); b.textContent = 'Menu'; };

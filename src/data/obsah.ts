@@ -163,13 +163,11 @@ export const keStazeni = {
   soubory: [
     {
       soubor: 'Letak_sluzby_web.pdf',
-      ikona: 'dokument',
       nazev: 'Přehled služeb',
       popis: 'Co za obec zajistím a jak začínáme · PDF, 1 strana',
     },
     {
       soubor: 'Kalendar_povinnosti_kanalizace.pdf',
-      ikona: 'kalendar',
       nazev: 'Kalendář povinností',
       popis: 'Co obec během roku čeká, měsíc po měsíci · PDF, 1 strana',
     },
