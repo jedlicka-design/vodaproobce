@@ -1,16 +1,21 @@
 ---
+import { Picture } from 'astro:assets';
 import { oMne } from '../data/obsah';
-// Až bude fotka: uložit do src/assets/portret.jpg a nahradit rámeček takto:
-//   import { Image } from 'astro:assets';
-//   import portret from '../assets/portret.jpg';
-//   <Image class="portrait" src={portret} alt="Ing. Jiří Havíř" width={640} format="webp" />
+import { web } from '../data/web';
+import portret from '../assets/jirka-portret.webp';
+// ==text== v odstavcích → <mark> (zvýraznění akcentní barvou)
+const zvyrazni = (t: string) => t.split(/==(.+?)==/g).map((cast, i) => ({ cast, mark: i % 2 === 1 }));
 ---
-<section id="o-mne" class="section">
-  <div class="wrap about">
-    <div class="portrait" aria-hidden="true"></div>
-    <div>
+<section id="o-mne" class="section omne">
+  <div class="wrap omne__wrap">
+    <figure class="omne__foto">
+      <Picture src={portret} alt={web.osoba} formats={['avif', 'webp']} fallbackFormat="webp"
+        widths={[400, 640, 900]} sizes="(max-width: 720px) 90vw, 480px" loading="lazy" />
+      <figcaption class="omne__jmeno">{web.osoba}</figcaption>
+    </figure>
+    <div class="omne__text">
       <h2>{oMne.nadpis}</h2>
-      {oMne.odstavce.map((p) => <p>{p}</p>)}
+      {oMne.odstavce.map((p) => <p>{zvyrazni(p).map(({ cast, mark }) => mark ? <mark>{cast}</mark> : cast)}</p>)}
     </div>
   </div>
 </section>

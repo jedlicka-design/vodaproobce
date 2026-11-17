@@ -103,11 +103,12 @@ export const postup = {
   ],
 };
 
+// ==text== = zvýrazněná pasáž (limetkový podklad), na webu se značky nezobrazí.
 export const oMne = {
   nadpis: 'Váš odborný zástupce',
   odstavce: [
-    'Jmenuji se Jiří Havíř a přes dvacet let se věnuji kanalizacím a čistírnám odpadních vod. Mám zkušenosti s jejich provozem, opravami i povinnostmi, které s nimi souvisejí. Vystudoval jsem vodní hospodářství obcí na VUT v Brně.',
-    'Sám jsem zastupitelem malé obce, takže znám i druhou stranu. Starosta řeší spoustu věcí a kanalizace je jen jednou z nich. Mým cílem je, aby její provozování splňovalo všechny požadavky zákona a přitom vám zabíralo co nejméně času a energie. Pracuji osobně, jsem k zastižení na telefonu a do obce rád přijedu.',
+    'Jmenuji se Jiří Havíř a ==přes dvacet let== se věnuji kanalizacím a čistírnám odpadních vod. Mám zkušenosti s jejich ==provozem, opravami i povinnostmi==, které s nimi souvisejí. Vystudoval jsem vodní hospodářství obcí na VUT v Brně.',
+    'Sám jsem zastupitelem malé obce, takže znám i druhou stranu. Starosta řeší spoustu věcí a kanalizace je jen jednou z nich. Mým cílem je, aby její ==provozování splňovalo všechny požadavky zákona a přitom vám zabíralo co nejméně času a energie==. Pracuji osobně, jsem k zastižení na telefonu a do obce rád přijedu.',
   ],
 };
 

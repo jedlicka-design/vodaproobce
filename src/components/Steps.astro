@@ -1,19 +1,29 @@
 ---
 import { postup } from '../data/obsah';
+// Kroky jako šachty na jedné trubce; poslední (roční balíček) má smyčku – opakuje se každý rok.
+// Štítky „zdarma" bez koncové tečky (jen interpunkce, text se nemění).
+const stitek = (t?: string) => t?.replace(/\.$/, '');
 ---
-<section id="postup" class="section section--mist">
+<section id="postup" class="section postup">
   <div class="wrap">
-    <div class="head head--stack"><h2>{postup.nadpis}</h2></div>
-    <ol class="steps">
+    <h2>{postup.nadpis}</h2>
+    <ol class="trasa">
       {postup.kroky.map((k, i) => (
-        <li class:list={['step', { 'step--first': i === 0 }]}>
-          <div class="step__n" aria-hidden="true">{i + 1}</div>
-          <h3>{k.nadpis}</h3>
-          <p>
-            {k.zvyrazneni && <><strong class="lead-in">{k.zvyrazneni}</strong>{' '}</>}
-            {k.text}
-            {k.zdarma && <>{' '}<span class="free">{k.zdarma}</span></>}
-          </p>
+        <li class:list={['krok', { 'krok--posledni': i === postup.kroky.length - 1 }]}>
+          <div class="krok__sachta" aria-hidden="true">
+            <span class="krok__poklop">{i + 1}</span>
+            {i === postup.kroky.length - 1 && (
+              <svg class="krok__smycka" viewBox="0 0 120 120">
+                <path d="M60 8a52 52 0 1 1-45.6 27" />
+                <path class="krok__smycka-sipka" d="M15.5 44.9L14.4 35L5.4 39.4" />
+              </svg>
+            )}
+          </div>
+          <div class="krok__obsah">
+            <h3>{k.nadpis}</h3>
+            {(k.zvyrazneni || k.zdarma) && <p class="krok__zdarma">{stitek(k.zvyrazneni || k.zdarma)}</p>}
+            <p class="krok__text">{k.text}</p>
+          </div>
         </li>
       ))}
     </ol>
