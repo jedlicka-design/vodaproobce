@@ -1,0 +1,175 @@
+---
+// Tiskový leták „Přehled služeb" (A4, 1 strana). Paleta a písma podle webu,
+// texty ze src/data/obsah.ts, aby leták a web říkaly totéž.
+// PDF: spustit dev server (npm run dev) a pak `npm run letak` → public/Letak_sluzby_web.pdf.
+import '@fontsource-variable/inter';
+import { Image } from 'astro:assets';
+import Icon from '../components/Icon.astro';
+import VykresSite from '../components/VykresSite.astro';
+import { sluzby, postup, oMne } from '../data/obsah';
+import { web } from '../data/web';
+import obec from '../assets/hero-obec-vysoka.webp';
+import portret from '../assets/jirka-portret.webp';
+import sachta from '../assets/sluzba-vyrez-sachta.webp';
+import plan from '../assets/sluzba-vyrez-plan.webp';
+import kalendar from '../assets/sluzba-vyrez-kalendar.webp';
+import stocne from '../assets/sluzba-vyrez-stocne.webp';
+// Obrázky karet ve stejném pořadí jako sluzby.bloky (jako v Services.astro).
+const fotky = [sachta, plan, kalendar, stocne];
+
+const zvyrazni = (t: string) => t.split(/==(.+?)==/g).map((cast, i) => ({ cast, mark: i % 2 === 1 }));
+const stitek = (t?: string) => t?.replace(/\.$/, '');
+// O mně: první odstavec z webu a poslední věta druhého.
+const omneText = oMne.odstavce[0] + ' ' + oMne.odstavce[1].split('. ').slice(-1)[0];
+---
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Leták – {web.nazev}</title>
+  <style is:global>
+    :root{--navy:#102c40;--white:#f7fafc;--lime:#dbff00;--muted:#4f5f6b;--line:#dbe3ea;--chip:#e3eef8;
+      --sans:'Inter Variable',system-ui,sans-serif}
+    @page{size:A4;margin:0}
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;background:#cfd8df}
+    body{font:400 10pt/1.5 var(--sans);color:var(--navy);-webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    h1,h2,h3,p,ul,ol{margin:0;padding:0}
+    a{color:inherit;text-decoration:none}
+    .list{width:210mm;height:297mm;margin:0 auto;background:#fff;display:flex;flex-direction:column;overflow:hidden;position:relative}
+    @media screen{.list{margin:24px auto;box-shadow:0 10px 40px rgba(16,44,64,.25)}}
+    .pad{padding-left:14mm;padding-right:14mm}
+
+    /* Hlavička: text nahoře na navy, dole pás vesnice s technickým výkresem sítě jako na webu.
+       Fotka i výkres sdílejí „canvas" 2000 × 1133 ukotvený pod spodní hranou hlavičky
+       (--posun), aby silnice s domy ležela ve spodní části hlavičky. */
+    .hlava{--h:86mm;--posun:-15mm;position:relative;flex:0 0 auto;height:var(--h);background:var(--navy);color:var(--white);overflow:hidden}
+    .hlava__canvas{position:absolute;left:0;width:100%;aspect-ratio:2000/1133;bottom:var(--posun)}
+    .hlava__canvas img,.hlava__canvas svg{display:block;width:100%;height:100%;max-width:none}
+    .hlava__canvas img{object-fit:cover}
+    .hlava__shade{position:absolute;inset:0;background:linear-gradient(180deg,
+      var(--navy) 0%,var(--navy) 46%,rgba(16,44,64,.75) 56%,rgba(16,44,64,.3) 70%,rgba(16,44,64,.12) 86%,rgba(16,44,64,.25) 100%)}
+    .hlava__obsah{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-start;gap:8mm;padding-top:14mm}
+    .hlava h1{margin-top:0;font:800 31pt/1 var(--sans);letter-spacing:-.035em;color:var(--white);white-space:nowrap}
+    .hlava__sub{margin-top:4mm;max-width:118mm;font-size:10.4pt;line-height:1.5;color:var(--white)}
+    .hlava__sub b{font-weight:700;color:var(--lime)}
+
+    /* Kontakty vpravo v hlavičce */
+    .kontakty{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:2.6mm;margin-top:.6mm;font-size:9.4pt;color:var(--white)}
+    .kontakty a,.kontakty span{display:flex;align-items:center;gap:2mm;white-space:nowrap}
+    .kontakty svg{width:4.2mm;height:4.2mm;flex:0 0 auto}
+    .kontakty .tel{background:var(--lime);color:var(--navy);font:700 11pt/1 var(--sans);border-radius:1.4mm;padding:2.2mm 3.4mm}
+    .kontakty .web{font-weight:700}
+
+    /* Výkres sítě (třídy z komponenty VykresSite; na webu je styluje global.css) */
+    .vykres{--cara:#9fd4f5;overflow:visible}
+    .vykres .cara{fill:none;stroke:var(--cara);stroke-width:1.3;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+    .vykres .cara--osa{stroke-opacity:.7;stroke-dasharray:12 4 2 4}
+    .vykres .cara--skryta{stroke-opacity:.7;stroke-dasharray:3 3}
+    .vykres .cara--slaba,.vykres .cara--kota{stroke-opacity:.75}
+    .vykres .bod{fill:var(--cara)}
+    .popisek--mobil{display:none}
+    .popisek__voditko{fill:none;stroke:var(--white);stroke-width:1;stroke-opacity:.9;vector-effect:non-scaling-stroke}
+    .popisek__bod{fill:var(--white)}
+    .popisek__stitek{transform:scale(2.1);transform-box:fill-box;transform-origin:center}
+    .popisek__stitek rect{fill:var(--navy);fill-opacity:.92;stroke:var(--white);stroke-opacity:.35;stroke-width:1;vector-effect:non-scaling-stroke}
+    .popisek__stitek text{font:500 14px var(--sans);fill:var(--white);letter-spacing:.02em}
+
+    /* Obsah: volné místo se rozdělí rovnoměrně mezi bloky */
+    .obsah{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;padding-top:2mm;padding-bottom:6mm}
+    h2{font:800 16pt/1.1 var(--sans);letter-spacing:-.025em;color:var(--navy)}
+
+    /* Služby: 2 × 2 karty jako na webu – text vlevo, obrázek vpravo, štítek vpravo nahoře */
+    .grid{margin-top:4.6mm;display:grid;grid-template-columns:1fr 1fr;gap:5mm}
+    .karta{position:relative;overflow:hidden;background:#fff;border-radius:4mm;min-height:46mm;padding:5.4mm calc(36% + 2mm) 5.4mm 5.4mm;
+      box-shadow:0 0 0 .5pt rgba(16,44,64,.08),0 .3mm .6mm rgba(16,44,64,.05),0 2.6mm 7mm -3.6mm rgba(16,44,64,.22)}
+    .karta__foto{position:absolute;right:0;top:0;bottom:0;width:36%;height:100%;object-fit:contain;object-position:center;padding:13mm 4mm 2mm 1mm}
+    .karta--hlavni::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.6mm;background:var(--lime)}
+    .kdy{position:absolute;z-index:2;top:4.4mm;right:4.4mm;padding:1.2mm 2.8mm;border-radius:99px;background:#e3eef8;font:700 7pt/1.2 var(--sans);white-space:nowrap}
+    .karta--hlavni .kdy{background:var(--lime)}
+    /* dlouhý štítek ročního balíčku: nadpis se zalomí dřív, aby do štítku nenarazil */
+    .karta--hlavni h3{max-width:36mm}
+    .karta h3{position:relative;z-index:1;font:800 13pt/1.15 var(--sans);letter-spacing:-.02em;color:var(--navy)}
+    .karta p{position:relative;z-index:1;margin-top:2.4mm;font-size:9pt;line-height:1.55;color:var(--muted)}
+
+    /* O mně */
+    .omne{display:flex;gap:7mm;align-items:center}
+    .omne__foto{flex:0 0 38mm;width:38mm;height:38mm;border-radius:3mm;object-fit:cover;object-position:50% 30%}
+    .omne__jmeno{display:flex;align-items:center;gap:2mm;margin-top:1.6mm;font:700 9.2pt/1.2 var(--sans);color:var(--navy)}
+    .omne__jmeno::before{content:"";width:4mm;height:.7mm;border-radius:1px;background:var(--navy)}
+    .omne p.omne__text{margin-top:3mm;font-size:9.6pt;line-height:1.55;color:var(--muted)}
+    mark{color:var(--navy);background:linear-gradient(transparent 52%,var(--lime) 52%,var(--lime) 92%,transparent 92%);padding:0 1px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+
+    /* Postup */
+    .kroky{margin-top:4.6mm;list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:4.4mm}
+    .krok{border-top:.8mm solid var(--navy);padding-top:3.2mm}
+    .krok h3{display:flex;align-items:center;gap:2.6mm;font:800 10pt/1.25 var(--sans);letter-spacing:-.01em}
+    /* číslo: větší kruh, číslice opticky na střed (ořez na výšku verzálek) */
+    .krok__c{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:9mm;height:9mm;border-radius:50%;background:var(--navy);color:var(--lime);font:800 13pt/1 var(--sans);font-variant-numeric:tabular-nums}
+    .krok__c span{display:block;text-box:trim-both cap alphabetic}
+    .krok__zdarma{display:inline-block;margin-top:2mm;padding:.8mm 2.2mm;border-radius:99px;background:var(--lime);font:700 7pt/1.2 var(--sans)}
+  </style>
+</head>
+<body>
+  <article class="list">
+    <header class="hlava">
+      <div class="hlava__canvas" aria-hidden="true">
+        <Image src={obec} alt="" width={1600} format="jpg" quality={78} />
+      </div>
+      <div class="hlava__shade"></div>
+      <div class="hlava__canvas" aria-hidden="true"><VykresSite /></div>
+
+      <div class="pad hlava__obsah">
+        <div>
+          <h1>Kanalizace bez starostí</h1>
+          <p class="hlava__sub">Odborné zastoupení provozovatele kanalizace, poradenství, evidence, hlášení a povolení pro obce. <b>Převezmu agendu – vy se můžete věnovat obci.</b></p>
+        </div>
+        <div class="kontakty">
+          <a class="tel" href={web.telefonHref}><Icon name="telefon" color="#102c40" />{web.telefon}</a>
+          <a href={`mailto:${web.email}`}><Icon name="email" color="#dbff00" />{web.email}</a>
+          <a class="web" href="https://vodaproobce.cz"><svg viewBox="0 0 24 24" fill="none" stroke="#dbff00" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>vodaproobce.cz</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="pad obsah">
+      <section>
+        <h2>{sluzby.nadpis}</h2>
+        <div class="grid">
+          {sluzby.bloky.map((b, i) => (
+            <section class:list={['karta', { 'karta--hlavni': b.hlavni }]}>
+              <Image class="karta__foto" src={fotky[i]} alt="" width={360} format="webp" />
+              <h3>{b.nadpis}</h3>
+              <p>{b.text}</p>
+              <span class="kdy">{b.kdy}</span>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <div class="omne">
+        <Image class="omne__foto" src={portret} alt={web.osoba} width={400} format="jpg" quality={82} />
+        <div>
+          <h2>{oMne.nadpis}</h2>
+          <p class="omne__jmeno">{web.osoba} · {web.sidlo}</p>
+          <p class="omne__text">{zvyrazni(omneText).map(({ cast, mark }) => mark ? <mark>{cast}</mark> : cast)}</p>
+        </div>
+      </div>
+
+      <section>
+        <h2>{postup.nadpis}</h2>
+        <ol class="kroky">
+          {postup.kroky.map((k, i) => (
+            <li class="krok">
+              <h3><span class="krok__c"><span>{i + 1}</span></span>{k.nadpis}</h3>
+              {(k.zvyrazneni || k.zdarma) && <span class="krok__zdarma">{stitek(k.zvyrazneni || k.zdarma)}</span>}
+            </li>
+          ))}
+        </ol>
+      </section>
+    </div>
+  </article>
+</body>
+</html>

@@ -19,6 +19,7 @@ Node 22.23+ (CI používá Node 24).
 | Telefon, e-mail, sídlo, IČO, klíč formuláře | `src/data/web.ts` |
 | Texty sekcí (služby, kalendář, postup, o mně, dotazy, ke stažení) | `src/data/obsah.ts` |
 | PDF ke stažení | `public/` |
+| Leták (PDF) | `src/pages/letak.astro` → při běžícím `npm run dev` spustit `npm run letak` |
 | Ochrana osobních údajů | `src/pages/ochrana-osobnich-udaju.astro` |
 | Vzhled | `src/styles/global.css` |
 

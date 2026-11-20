@@ -4,78 +4,7 @@ import Icon from './Icon.astro';
 import { web } from '../data/web';
 import obec from '../assets/hero-obec-vysoka.webp';
 import lide from '../assets/hero-jirka-starosta.webp';
-
-// Technický výkres sítě přes fotku. Fotka má 2000 × 1133 px; souřadnice kresby jsou v pixelech
-// jejího spodního pásu 2000 × 667 (y = 0 je 466 px od horního okraje, viewBox proto začíná na -466).
-// Fotka i SVG sdílejí stejný „canvas" ukotvený zdola, takže kresba sedí na silnici v každé šířce okna
-// a nebe nad vesnicí jen doplňuje místo nahoře.
-
-// Osa silnice (povrch terénu) odečtená z fotky.
-const road = [[0, 278], [250, 290], [500, 316], [750, 321], [1000, 324], [1250, 327], [1450, 327], [1560, 326]];
-const roadY = (x: number) => {
-  for (let i = 1; i < road.length; i++) {
-    const [x0, y0] = road[i - 1], [x1, y1] = road[i];
-    if (x <= x1) return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
-  }
-  return road[road.length - 1][1];
-};
-const DEPTH = 74; // hloubka osy stoky pod povrchem
-const pipeY = (x: number) => roadY(x) + DEPTH;
-const pts = (a: number[][]) => a.map(([x, y]) => `${x},${y.toFixed(1)}`).join(' ');
-
-// Stoka pod silnicí, na konci vyúsťuje do rybníka.
-const stoka = pts([...road.map(([x]) => [x, pipeY(x)]), [1612, 401]]);
-
-// Šachty jako válce: přední hrana dna plně, zadní (skrytá) čárkovaně.
-const R = 14, RY = 4.5;
-const sachty = [250, 640, 1060, 1450].map((x) => {
-  const top = roadY(x), bot = pipeY(x);
-  return {
-    x, top,
-    boky: `M${x - R} ${top} V${bot} M${x + R} ${top} V${bot}`,
-    dnoPredni: `M${x - R} ${bot} A${R} ${RY} 0 0 0 ${x + R} ${bot}`,
-    dnoZadni: `M${x - R} ${bot} A${R} ${RY} 0 0 1 ${x + R} ${bot}`,
-    poklop: `M${x - 8} ${top} h16 M${x} ${top - 3} v6`,
-  };
-});
-
-// Přípojky: výstup z domu u základů → spád pod zahradou → revizní šachtička
-// u hranice pozemku → odbočka šikmo shora do stoky. [x, y paty domu]
-const domy = [[180, 266], [370, 281], [560, 291], [755, 296], [950, 299], [1165, 306], [1378, 309], [1490, 284]];
-const pripojky = domy.map(([x, y]) => {
-  const ex = x + 4, ey = y + 3;            // výstup z domu
-  const rx = x + 12, ry = roadY(x) - 7;    // revizní šachtička
-  const jx = x + 46, jy = pipeY(jx) - 6;   // napojení na horní obrys stoky
-  const bx = jx - 14, by = jy - 12;        // začátek odbočky (45°)
-  return {
-    ex, ey, rx, ry,
-    d: `M${ex} ${ey} L${rx} ${(ry - 6).toFixed(1)} M${rx} ${(ry + 5).toFixed(1)} L${bx} ${by.toFixed(1)} L${jx} ${jy.toFixed(1)}`,
-    revize: `M${rx - 4} ${(ry - 7).toFixed(1)} v12 M${rx + 4} ${(ry - 7).toFixed(1)} v12`,
-  };
-});
-
-// Kóta hloubky u šachty 1060.
-const kx = 1060;
-const kota = `M${kx} ${roadY(kx)} H${kx - 50} M${kx} ${pipeY(kx)} H${kx - 50} M${kx - 42} ${roadY(kx)} V${pipeY(kx)}`
-  + ` M${kx - 46} ${roadY(kx) + 8} l4 -8 l4 8 M${kx - 46} ${pipeY(kx) - 8} l4 8 l4 -8`;
-
-// Popisky ve štítcích: bod na prvku (ax, ay) → vodítko → štítek (lx, ly).
-// Desktop: lidé stojí vpravo, popisky jsou v levé části vesnice. Mobil: lidé vlevo, popisky vpravo.
-const mid = (q: (typeof pripojky)[number]) => ({ ax: (q.ex + q.rx) / 2, ay: (q.ey + q.ry - 6) / 2 });
-type Popisek = { t: string; ax: number; ay: number; lx: number; ly: number; anchor: string; bezVoditka?: boolean; kde: 'desktop' | 'mobil' };
-const popisky = ([
-  { kde: 'desktop', t: 'přípojka', ax: 777, ay: 348, lx: 760, ly: pipeY(760) + 44, anchor: 'middle' },
-  { kde: 'desktop', t: 'šachta', ax: 250, ay: pipeY(250) + 12, lx: 250, ly: pipeY(250) + 52, anchor: 'middle' },
-  { kde: 'desktop', t: 'stoka', ax: 470, ay: pipeY(470) + 8, lx: 470, ly: pipeY(470) + 40, anchor: 'middle' },
-  { kde: 'mobil', t: 'přípojka', ...mid(pripojky[7]), lx: 1546, ly: 262, anchor: 'start' },
-  { kde: 'mobil', t: 'výusť', ax: 1626, ay: 420, lx: 1650, ly: 462, anchor: 'start' },
-  { kde: 'mobil', t: 'rybník', ax: 1730, ay: 392, lx: 1730, ly: 392, anchor: 'middle', bezVoditka: true },
-] as Popisek[]).map((i) => {
-  const w = i.t.length * 8.6 + 18, h = 24;
-  const x0 = i.anchor === 'end' ? i.lx - w : i.anchor === 'middle' ? i.lx - w / 2 : i.lx;
-  const y0 = i.bezVoditka ? i.ly - h / 2 : i.ly > i.ay ? i.ly : i.ly - h;
-  return { ...i, w, h, x0, y0 };
-});
+import VykresSite from './VykresSite.astro';
 ---
 <section id="uvod" class="hero">
   <div class="wrap hero__content">
@@ -98,52 +27,7 @@ const popisky = ([
     </div>
     <div class="hero__shade"></div>
     <div class="hero__canvas">
-      <svg class="vykres" viewBox="0 -466 2000 1133" preserveAspectRatio="none">
-        <!-- přípojky -->
-        {pripojky.map((q) => (
-          <g>
-            <path class="cara" d={q.d} />
-            <path class="cara" d={q.revize} />
-            <ellipse class="cara" cx={q.rx} cy={q.ry - 7} rx="4" ry="1.4" />
-            <circle class="bod" cx={q.ex} cy={q.ey} r="2.2" />
-          </g>
-        ))}
-
-        <!-- stoka: dva obrysy trouby a osa -->
-        <polyline class="cara" points={stoka} transform="translate(0 -6)" />
-        <polyline class="cara" points={stoka} transform="translate(0 6)" />
-        <polyline class="cara cara--osa" points={stoka} />
-
-        <!-- šachty -->
-        {sachty.map((s) => (
-          <g>
-            <path class="cara" d={s.boky} />
-            <path class="cara" d={s.dnoPredni} />
-            <path class="cara cara--skryta" d={s.dnoZadni} />
-            <ellipse class="cara" cx={s.x} cy={s.top} rx={R} ry={RY} />
-            <path class="cara cara--slaba" d={s.poklop} />
-          </g>
-        ))}
-
-        <!-- výusť -->
-        <path class="cara" d="M1604 388 l20 4 v26 l-20 -4z" />
-        <path class="cara" d="M1626 400 q12 2 16 9" />
-
-        <!-- kóta hloubky -->
-        <path class="cara cara--kota" d={kota} />
-
-        <!-- popisky ve štítcích -->
-        {popisky.map((i) => (
-          <g class={`popisek popisek--${i.kde}`}>
-            {!i.bezVoditka && <path class="popisek__voditko" d={`M${i.ax} ${i.ay} L${i.lx} ${i.ly}`} />}
-            {!i.bezVoditka && <circle class="popisek__bod" cx={i.ax} cy={i.ay} r="2.6" />}
-            <g class="popisek__stitek">
-              <rect x={i.x0} y={i.y0} width={i.w} height={i.h} rx="12" />
-              <text x={i.x0 + i.w / 2} y={i.y0 + 16.5} text-anchor="middle">{i.t}</text>
-            </g>
-          </g>
-        ))}
-      </svg>
+      <VykresSite />
     </div>
   </div>
 
