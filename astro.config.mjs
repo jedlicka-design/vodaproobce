@@ -16,7 +16,7 @@ export default defineConfig({
   trailingSlash: 'ignore',
   integrations: [
     // Ochranu osobních údajů do sitemapy přidat, až bude hotový její text.
-    // Tisková stránka letáku (/letak) do sitemapy nepatří, má noindex.
-    sitemap({ filter: (page) => !page.includes('ochrana-osobnich-udaju') && !page.includes('/letak') }),
+    // Tiskové stránky (/letak, /kalendar) do sitemapy nepatří, mají noindex.
+    sitemap({ filter: (page) => !page.includes('ochrana-osobnich-udaju') && !page.includes('/letak') && !page.includes('/kalendar') }),
   ],
 });

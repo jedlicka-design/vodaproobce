@@ -109,7 +109,7 @@ const popisky = ([
 
   <!-- popisky ve štítcích -->
   {popisky.map((i) => (
-    <g class={`popisek popisek--${i.kde}`}>
+    <g class={`popisek popisek--${i.kde}`} data-t={i.t}>
       {!i.bezVoditka && <path class="popisek__voditko" d={`M${i.ax} ${i.ay} L${i.lx} ${i.ly}`} />}
       {!i.bezVoditka && <circle class="popisek__bod" cx={i.ax} cy={i.ay} r="2.6" />}
       <g class="popisek__stitek">

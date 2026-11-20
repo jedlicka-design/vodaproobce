@@ -1,0 +1,195 @@
+---
+// Tiskový „Roční kalendář povinností kanalizace" (A4 na šířku, 1 strana) ve stylu letáku.
+// PDF: spustit dev server (npm run dev) a pak `npm run kalendar` → public/Kalendar_povinnosti_kanalizace.pdf.
+// Texty převzaté beze změny z původního PDF kalendáře.
+// Zápis textů: **tučně** = termín, _(…)_ = upřesnění kurzívou.
+import '@fontsource-variable/inter';
+import { Image } from 'astro:assets';
+import Icon from '../components/Icon.astro';
+import { kalendar } from '../data/obsah';
+import { web } from '../data/web';
+import portret from '../assets/jirka-portret.webp';
+
+const mesice = [
+  {
+    kdy: 'Leden',
+    obec: '**do 31. 1.** fakturované množství stočného za minulý rok _(jen obce vybírající stočné, pro VÚPE a vyrovnávací kalkulaci)_',
+    zastupce: '**do 31. 1.** hlášení o vypouštění odpadních vod pro vodní bilanci _(pro správce povodí)_ · roční zpráva o provozu pro zastupitelstvo',
+  },
+  {
+    kdy: 'Únor',
+    zastupce: '**do 15. 2.** poplatkové přiznání k poplatku za vypouštění odpadních vod do vod povrchových _(pro celní úřad, jen obce, kterých se poplatek týká)_ · **do 28. 2.** vybrané údaje z majetkové a provozní evidence (VÚME/VÚPE) pro MZe',
+  },
+  {
+    kdy: 'Březen',
+    obec: '**do 31. 3.** účetní podklady za minulý rok – náklady na kanalizaci, vybrané stočné, tvorba a čerpání rezervy na obnovu _(pro vyrovnávací kalkulaci)_',
+    zastupce: 'jarní kontrola sítě, výustí a odlehčovacích komor, zápis do provozního deníku',
+  },
+  {
+    kdy: 'Duben',
+    obec: '**do 30. 4.** zveřejnění porovnání kalkulace se skutečností na úřední desce, i bez vybírání stočného _(text připraví odborný zástupce)_',
+    zastupce: '**do 30. 4.** vyrovnávací kalkulace stočného a porovnání se skutečností pro MZe',
+  },
+  {
+    kdy: 'Květen\n–\nZáří', // tři řádky pod sebou (white-space:pre-line)
+    zastupce: 'vyhodnocení rozborů po každém odběru · hlídání platnosti povolení a schválených dokumentů · hlídání potřeby aktualizace plánu financování obnovy',
+  },
+  {
+    kdy: 'Říjen',
+    zastupce: 'podzimní kontrola sítě, výustí a odlehčovacích komor, zápis do provozního deníku',
+  },
+  {
+    kdy: 'Listopad',
+    obec: '**do 30. 11.** předpokládané náklady na kanalizaci pro příští rok (z návrhu rozpočtu) _(pro plánovou kalkulaci)_; počet napojených obyvatel a známé změny na síti _(pro vodní bilanci a evidenci)_',
+    zastupce: '**do 30. 11.** aktualizace plánu kontroly míry znečištění odpadních vod',
+  },
+  {
+    kdy: 'Prosinec',
+    zastupce: '**do 31. 12.** plánová kalkulace stočného na příští rok pro MF · výpočet množství vypouštěných vod pro vodní bilanci',
+  },
+];
+
+const prubezne = [
+  {
+    nadpis: 'Obec',
+    body: [
+      'předá protokoly rozborů, pokud je laboratoř neposílá přímo odbornému zástupci',
+      'hned ohlásí únik ropných či jiných látek do kanalizace nebo potoka – hasičům nebo ČIŽP a odbornému zástupci',
+      'dá vědět o neobvyklém stavu výusti (zápach, zabarvení, pěna)',
+      'dá vědět o nových přípojkách, stavbách u kanalizace a změnách sítě',
+      'dá vědět o kontrolách a dopisech úřadů',
+    ],
+  },
+  {
+    nadpis: 'Odborný zástupce',
+    foto: true,
+    body: [
+      'vykonává funkci odborného zástupce a dohlíží na odbornou úroveň provozu',
+      'zpracuje a v termínu odešle všechna hlášení a kalkulace',
+      'vede provozní evidenci a deník, vyhodnocuje rozbory',
+      'hlídá platnost povolení, schválených dokumentů a termíny, včas vyžádá podklady',
+      'jedná za obec s úřady a konzultuje provoz kanalizace po telefonu i e-mailem',
+    ],
+  },
+];
+
+// **…** → <b>, _(…)_ → <i>
+const casti = (t: string) =>
+  t.split(/(\*\*.+?\*\*|_\(.+?\)_)/g).filter(Boolean).map((c) =>
+    c.startsWith('**') ? { b: c.slice(2, -2) } : c.startsWith('_(') ? { i: c.slice(1, -1) } : { t: c });
+---
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Kalendář povinností – {web.nazev}</title>
+  <style is:global>
+    :root{--navy:#102c40;--white:#f7fafc;--lime:#dbff00;--muted:#4f5f6b;--line:#dbe3ea;--chip:#e3eef8;--tint:#f1f6fb;--na-tmave:rgba(247,250,252,.78);
+      --sans:'Inter Variable',system-ui,sans-serif}
+    @page{size:A4 landscape;margin:0}
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;background:#cfd8df}
+    body{font:400 9pt/1.45 var(--sans);color:var(--navy);-webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    h1,h2,h3,p,ul,ol{margin:0;padding:0}
+    a{color:inherit;text-decoration:none}
+    .list{width:297mm;height:210mm;margin:0 auto;background:var(--navy);display:flex;flex-direction:column;overflow:hidden;position:relative}
+    @media screen{.list{margin:24px auto;box-shadow:0 10px 40px rgba(16,44,64,.25)}}
+    .pad{padding-left:12mm;padding-right:12mm}
+
+    /* Celá stránka na navy, bílá je jen karta s povinnostmi po měsících. Hlavička: nadpis, úvod, kontakty vpravo */
+    .hlava{position:relative;flex:0 0 auto;color:var(--white);padding-bottom:2mm}
+    .hlava__obsah{position:relative;z-index:2;display:flex;align-items:flex-start;gap:7mm;padding-top:7mm}
+    .hlava .kontakty{margin-left:auto}
+    .hlava h1{font:800 28pt/1 var(--sans);letter-spacing:-.035em;color:var(--lime);white-space:nowrap}
+    .hlava__sub{margin-top:3.4mm;max-width:170mm;font-size:12pt;line-height:1.45;color:var(--na-tmave)}
+
+    .kontakty{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:2.6mm;font-size:9pt;color:var(--white)}
+    .kontakty a{display:flex;align-items:center;gap:2mm;white-space:nowrap}
+    .kontakty svg{width:4.2mm;height:4.2mm;flex:0 0 auto}
+    .kontakty .tel{background:var(--lime);color:var(--navy);font:700 11pt/1 var(--sans);border-radius:1.4mm;padding:2.2mm 3.4mm}
+    .kontakty .web{font-weight:700}
+
+    /* Obsah: tabulka měsíců vlevo, průběžné povinnosti vpravo */
+    .obsah{flex:1;display:grid;grid-template-columns:1fr 74mm;gap:7mm;padding-top:4.4mm;padding-bottom:6mm;min-height:0}
+    /* Stín karty (.tab::before) je na samostatné vrstvě. box-shadow by Chrome uložil do PDF jako obrázek,
+       který náhled v macOS (Preview) kreslí jako šedý obdélník; filter přímo na kartě by zase
+       převedl text na obrázek. */
+    /* Měsíce stojí na navy vlevo od karty; bílá karta (vrstva ::before) pokrývá jen sloupce obec / zástupce */
+    .tab{--mesice:27mm;position:relative;isolation:isolate;display:grid;grid-template-columns:var(--mesice) 1fr 1fr;grid-auto-rows:auto;align-content:stretch}
+    .tab::before{content:"";position:absolute;inset:0 0 0 var(--mesice);z-index:-1;border-radius:4mm;background:#fff;
+      filter:drop-shadow(0 0 .15mm rgba(16,44,64,.18)) drop-shadow(0 1.2mm 2mm rgba(16,44,64,.16))}
+    .tab__hlava--z{border-top-right-radius:4mm}
+    .tab > :last-child{border-bottom-right-radius:4mm}
+    .tab__hlava{padding:2.6mm 3.6mm 2.2mm;font:800 12pt/1.2 var(--sans);letter-spacing:-.01em;color:var(--navy);border-bottom:1px solid var(--line)}
+    .tab__hlava--z{background:var(--tint);color:var(--navy)}
+    .tab__bunka{padding:1.3mm 3.6mm;border-bottom:1px solid var(--line);color:var(--navy)}
+    .tab__bunka--z{background:var(--tint)}
+    .tab > :nth-last-child(-n+3){border-bottom:0}
+    .tab__mesic{padding:1.3mm 3mm 1.3mm 0;text-align:right;border-bottom:1px solid rgba(247,250,252,.22)}
+    /* linky řádků pokračují i pod měsíci na navy, aby bylo vidět, co k čemu patří */
+    .tab__hlava:first-child{border-bottom-color:rgba(247,250,252,.22)}
+    .mesic{display:block;font:800 12pt/1.2 var(--sans);color:var(--white);white-space:pre-line}
+    .tab b{font-weight:700}
+    .tab i{color:var(--muted)}
+    .prazdne{color:var(--muted)}
+
+    /* průběžné povinnosti: bez karet, jen pod sebou */
+    .bok{display:flex;flex-direction:column;gap:7mm;padding-top:2.4mm}
+    .bok h2{margin-bottom:-2mm;font:800 16pt/1.1 var(--sans);letter-spacing:-.025em;color:var(--white)}
+    .bok h3{display:flex;align-items:center;gap:2.6mm;font:800 11pt/1.2 var(--sans);letter-spacing:-.01em;color:var(--white)}
+    .bok__foto{flex:0 0 auto;width:14mm;height:14mm;border-radius:50%;object-fit:cover;object-position:50% 30%}
+    .bok ul{margin-top:2.6mm;list-style:none;display:flex;flex-direction:column;gap:1.6mm}
+    /* odrážky jako v detailu služeb na webu, na navy obrácené: limetkový kroužek s navy fajfkou */
+    .bok li{position:relative;padding-left:5.4mm;color:var(--na-tmave)}
+    .bok li::before{content:"";position:absolute;left:0;top:.15em;width:3.6mm;height:3.6mm;border-radius:50%;background:var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23102c40' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/2.4mm no-repeat}
+  </style>
+</head>
+<body>
+  <article class="list">
+    <header class="hlava">
+      <div class="pad hlava__obsah">
+        <div>
+          <h1>Roční kalendář povinností kanalizace</h1>
+          <p class="hlava__sub">{kalendar.uvod}</p>
+        </div>
+        <div class="kontakty">
+          <a class="tel" href={web.telefonHref}><Icon name="telefon" color="#102c40" />{web.telefon}</a>
+          <a href={`mailto:${web.email}`}><Icon name="email" color="#dbff00" />{web.email}</a>
+          <a class="web" href="https://vodaproobce.cz"><svg viewBox="0 0 24 24" fill="none" stroke="#dbff00" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>vodaproobce.cz</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="pad obsah">
+      <section class="tab" aria-label="Povinnosti po měsících">
+        <div class="tab__hlava"></div>
+        <div class="tab__hlava">Obec dodá</div>
+        <div class="tab__hlava tab__hlava--z">Odborný zástupce zajistí</div>
+        {mesice.map((m) => (
+          <>
+            <div class="tab__mesic"><span class="mesic">{m.kdy}</span></div>
+            <div class="tab__bunka">
+              {m.obec ? casti(m.obec).map((c) => c.b ? <b>{c.b}</b> : c.i ? <i>{c.i}</i> : c.t) : <span class="prazdne">–</span>}
+            </div>
+            <div class="tab__bunka tab__bunka--z">
+              {casti(m.zastupce).map((c) => c.b ? <b>{c.b}</b> : c.i ? <i>{c.i}</i> : c.t)}
+            </div>
+          </>
+        ))}
+      </section>
+
+      <aside class="bok">
+        <h2>Průběžně během roku</h2>
+        {prubezne.map((p) => (
+          <section>
+            <h3>{p.nadpis}{p.foto && <Image class="bok__foto" src={portret} alt={web.osoba} width={160} format="jpg" quality={82} />}</h3>
+            <ul>{p.body.map((b) => <li>{b}</li>)}</ul>
+          </section>
+        ))}
+      </aside>
+    </div>
+  </article>
+</body>
+</html>

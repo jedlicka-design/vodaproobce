@@ -20,6 +20,7 @@ Node 22.23+ (CI používá Node 24).
 | Texty sekcí (služby, kalendář, postup, o mně, dotazy, ke stažení) | `src/data/obsah.ts` |
 | PDF ke stažení | `public/` |
 | Leták (PDF) | `src/pages/letak.astro` → při běžícím `npm run dev` spustit `npm run letak` |
+| Kalendář povinností (PDF) | `src/pages/kalendar.astro` → při běžícím `npm run dev` spustit `npm run kalendar` |
 | Ochrana osobních údajů | `src/pages/ochrana-osobnich-udaju.astro` |
 | Vzhled | `src/styles/global.css` |
 
