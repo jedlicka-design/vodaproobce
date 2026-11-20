@@ -21,6 +21,7 @@ Node 22.23+ (CI používá Node 24).
 | PDF ke stažení | `public/` |
 | Leták (PDF) | `src/pages/letak.astro` → při běžícím `npm run dev` spustit `npm run letak` |
 | Kalendář povinností (PDF) | `src/pages/kalendar.astro` → při běžícím `npm run dev` spustit `npm run kalendar` |
+| Vizitka (PDF 90 × 50 mm) | `src/pages/vizitka.astro` → při běžícím `npm run dev` spustit `npm run vizitka` → `../Vizitka/Vizitka_90x50_spadavka3mm.pdf` (mimo repozitář) |
 | Ochrana osobních údajů | `src/pages/ochrana-osobnich-udaju.astro` |
 | Vzhled | `src/styles/global.css` |
 

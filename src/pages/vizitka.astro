@@ -1,0 +1,82 @@
+---
+// Tisková vizitka 90 × 50 mm (běžný český formát), oboustranná, spadávka 3 mm (stránka 96 × 56 mm), ve stylu letáku.
+// PDF: spustit dev server (npm run dev) a pak `npm run vizitka` → ../Vizitka/Vizitka_90x50_spadavka3mm.pdf.
+// Texty odsouhlasené v podkladu ../Vizitka/Incoming/Vizitka_podklad (beze změny).
+import '@fontsource-variable/inter';
+import { Image } from 'astro:assets';
+import { web } from '../data/web';
+import viko from '../assets/kalendar-vika.webp'; // víko kanálu v ročních obdobích (jako kalendář na webu)
+---
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Vizitka – {web.nazev}</title>
+  <style is:global>
+    :root{--navy:#102c40;--white:#f7fafc;--lime:#dbff00;--muted:#4f5f6b;--na-tmave:rgba(247,250,252,.78);
+      --sans:'Inter Variable',system-ui,sans-serif}
+    @page{size:96mm 56mm;margin:0}
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;background:#cfd8df}
+    body{font:400 8pt/1.4 var(--sans);color:var(--navy);-webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    h1,p{margin:0}
+    a{color:inherit;text-decoration:none}
+
+    /* strana vč. spadávky 3 mm; obsah drží odstup ≥ 5 mm od ořezu (8 mm od kraje stránky) */
+    .strana{position:relative;width:96mm;height:56mm;overflow:hidden;break-after:page;display:flex;flex-direction:column;padding:9.5mm 9mm 8.5mm}
+    .strana:last-child{break-after:auto}
+    @media screen{
+      .strana{margin:24px auto;box-shadow:0 10px 40px rgba(16,44,64,.25)}
+      /* čára ořezu jen v náhledu */
+      .strana::after{content:"";position:absolute;inset:3mm;border:1px dashed rgba(220,40,40,.6);pointer-events:none}
+    }
+
+    /* Přední strana: světlá; kontakty vpravo nahoře (bez ikon), jméno dole; jméno a telefon se zvýrazňovačem */
+    .predni{background:#fff;justify-content:space-between}
+    .kontakty{align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:1.5mm;font-size:8pt}
+    .kontakty .tel{font:700 9pt/1.2 var(--sans)}
+    .kontakty .web{font-weight:700}
+    /* limetkový zvýrazňovač pod spodní částí textu (jako zvýraznění na letáku a webu) */
+    .zvyraz{background:linear-gradient(transparent 55%,var(--lime) 55%,var(--lime) 92%,transparent 92%);padding:0 .6mm;margin:0 -.6mm;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+    .predni h1{font:800 16pt/1.1 var(--sans);letter-spacing:-.03em}
+    .role{margin-top:1.4mm;font:500 8pt/1.3 var(--sans);color:var(--muted)}
+    .misto{margin-top:.6mm;font-size:8pt;color:var(--muted)}
+
+    /* Zadní strana: navy, nadpis a popis z hero webu vlevo; víko kanálu v ročních obdobích
+       jako pozadí vpravo (přetéká přes spadávku), zleva do něj přechází navy */
+    .zadni{background:var(--navy);color:var(--white);justify-content:center}
+    .viko{position:absolute;right:-28mm;top:50%;transform:translateY(-50%);width:92mm;height:92mm;border-radius:50%;object-fit:cover}
+    .clona{position:absolute;inset:0;background:linear-gradient(90deg,var(--navy) 0%,var(--navy) 42%,rgba(16,44,64,.6) 62%,rgba(16,44,64,.1) 85%)}
+    .zadni__text{position:relative;width:44mm}
+    /* text jako v hero webu: bílý nadpis, pod ním popis */
+    .zadni h1{font:800 16pt/1.05 var(--sans);letter-spacing:-.03em;color:var(--white)}
+    .zadni h1 span{display:block;color:var(--lime)}
+    .zadni__sub{margin-top:2.6mm;font:400 7pt/1.45 var(--sans);color:var(--na-tmave)}
+  </style>
+</head>
+<body>
+  <section class="strana predni" aria-label="Přední strana">
+    <div class="kontakty">
+      <a class="tel" href={web.telefonHref}><span class="zvyraz">{web.telefon}</span></a>
+      <a href={`mailto:${web.email}`}>{web.email}</a>
+      <a class="web" href="https://vodaproobce.cz">vodaproobce.cz</a>
+    </div>
+    <div>
+      <h1><span class="zvyraz">{web.osoba}</span></h1>
+      <p class="role">odborný zástupce provozovatele kanalizace</p>
+      <p class="misto">{web.sidlo}</p>
+    </div>
+  </section>
+
+  <section class="strana zadni" aria-label="Zadní strana">
+    <Image class="viko" src={viko} alt="" width={640} format="jpg" quality={85} />
+    <div class="clona"></div>
+    <div class="zadni__text">
+      <h1>Kanalizace <span>bez starostí</span></h1>
+      <p class="zadni__sub">Odborné zastoupení provozovatele kanalizace, poradenství, evidence, hlášení a povolení pro obce.</p>
+    </div>
+  </section>
+</body>
+</html>
