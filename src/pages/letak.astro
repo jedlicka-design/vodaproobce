@@ -109,7 +109,8 @@ const omneText = oMne.odstavce[0] + ' ' + oMne.odstavce[1].split('. ').slice(-1)
     .omne__jmeno{font:700 9pt/1.2 var(--sans);color:var(--navy)}
     .omne__jmeno::before{content:"";display:inline-block;width:4mm;height:.7mm;margin-right:2mm;vertical-align:.35em;border-radius:1px;background:var(--navy)}
     .omne p.omne__text{margin-top:3mm;font-size:10pt;line-height:1.55;color:var(--muted)}
-    mark{color:var(--navy);background:linear-gradient(transparent 52%,var(--lime) 52%,var(--lime) 92%,transparent 92%);padding:0 1px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+    /* zvýraznění jako na webu (.omne mark): plná limetka, text lícuje díky zápornému marginu */
+    mark{color:var(--navy);background:var(--lime);padding:0 .8mm;margin:0 -.8mm;border-radius:.5mm;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 
     /* Postup */
     /* sloupce podle obsahu, názvy kroků se nelámou */
