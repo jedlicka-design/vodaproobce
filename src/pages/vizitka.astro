@@ -14,6 +14,7 @@ import viko from '../assets/kalendar-vika.webp'; // víko kanálu v ročních ob
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>Vizitka – {web.nazev}</title>
+  <script is:inline>if (new URLSearchParams(location.search).has('orez')) document.documentElement.classList.add('orez');</script>
   <style is:global>
     :root{--navy:#102c40;--white:#f7fafc;--lime:#dbff00;--muted:#4f5f6b;--na-tmave:rgba(247,250,252,.78);
       --sans:'Inter Variable',system-ui,sans-serif}
@@ -27,10 +28,15 @@ import viko from '../assets/kalendar-vika.webp'; // víko kanálu v ročních ob
     /* strana vč. spadávky 3 mm; obsah drží odstup ≥ 5 mm od ořezu (8 mm od kraje stránky) */
     .strana{position:relative;width:96mm;height:56mm;overflow:hidden;break-after:page;display:flex;flex-direction:column;padding:9.5mm 9mm 8.5mm}
     .strana:last-child{break-after:auto}
+    /* Náhled na obrazovce: výchozí je oříznutá vizitka 90 × 50 mm (bez spadávky).
+       S parametrem ?orez (např. /vizitka/?orez) se ukáže celá tisková plocha se spadávkou a čarou ořezu.
+       Tisk / PDF (npm run vizitka) má spadávku vždy, náhled ho neovlivní. */
     @media screen{
       .strana{margin:24px auto;box-shadow:0 10px 40px rgba(16,44,64,.25)}
-      /* čára ořezu jen v náhledu */
-      .strana::after{content:"";position:absolute;inset:3mm;border:1px dashed rgba(220,40,40,.6);pointer-events:none}
+      html:not(.orez) .strana{clip-path:inset(3mm);box-shadow:none;margin:-3mm auto;filter:drop-shadow(0 4px 14px rgba(16,44,64,.25))}
+      html:not(.orez) body{padding:24px 0}
+      html:not(.orez) .strana + .strana{margin-top:calc(-6mm + 24px)}
+      html.orez .strana::after{content:"";position:absolute;inset:3mm;border:1px dashed rgba(220,40,40,.6);pointer-events:none}
     }
 
     /* Přední strana: světlá; jméno a role vlevo nahoře, kontakty vpravo dole (bez ikon) */
