@@ -285,7 +285,7 @@ p{margin:0}
 .omne__text p:first-of-type{font-size:clamp(19px,1.6vw,22px);line-height:1.55;color:var(--h-navy);font-weight:500}
 .omne__text p+p{margin-top:18px}
 /* zvýrazňovač: limetkový pruh ve spodní části řádku */
-.omne mark{color:inherit;background:linear-gradient(transparent 52%,var(--lime) 52%,var(--lime) 92%,transparent 92%);padding:0 2px;margin:0 -2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.omne mark{color:inherit;background:var(--lime);padding:0 3px;margin:0 -3px;border-radius:2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 
 /* Dotazy */
 /* Časté dotazy – vlevo nadpis a kontakt (přichycené), vpravo otázky jako karty s rychlou odpovědí */
