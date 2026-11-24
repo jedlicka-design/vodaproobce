@@ -33,50 +33,38 @@ import viko from '../assets/kalendar-vika.webp'; // víko kanálu v ročních ob
       .strana::after{content:"";position:absolute;inset:3mm;border:1px dashed rgba(220,40,40,.6);pointer-events:none}
     }
 
-    /* Přední strana: světlá; kontakty vpravo nahoře (bez ikon), jméno dole; jméno a telefon se zvýrazňovačem */
+    /* Přední strana: světlá; jméno a role vlevo nahoře, kontakty vpravo dole (bez ikon) */
     .predni{background:#fff;justify-content:space-between}
-    .kontakty{align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:1.5mm;font-size:8pt}
-    .kontakty .tel{font:700 9pt/1.2 var(--sans)}
-    .kontakty .web{font-weight:700}
-    /* limetkový zvýrazňovač pod spodní částí textu (jako zvýraznění na letáku a webu) */
-    .zvyraz{background:linear-gradient(transparent 55%,var(--lime) 55%,var(--lime) 92%,transparent 92%);padding:0 .6mm;margin:0 -.6mm;-webkit-box-decoration-break:clone;box-decoration-break:clone}
     .predni h1{font:800 16pt/1.1 var(--sans);letter-spacing:-.03em}
     .role{margin-top:1.4mm;font:500 8pt/1.3 var(--sans);color:var(--muted)}
-    .misto{margin-top:.6mm;font-size:8pt;color:var(--muted)}
+    .kontakty{align-self:flex-end;display:flex;flex-direction:column;align-items:flex-end;gap:1.4mm;font-size:10pt;line-height:1.2}
+    .kontakty .tel{font-weight:700}
+    .kontakty .web{font-weight:700}
 
-    /* Zadní strana: navy, nadpis a popis z hero webu vlevo; víko kanálu v ročních obdobích
-       jako pozadí vpravo (přetéká přes spadávku), zleva do něj přechází navy */
+    /* Zadní strana: navy, nadpis vlevo; vpravo celé víko kanálu bez přechodu,
+       celé uvnitř ořezu (5 mm od čáry ořezu), aby se nikde neusekávalo */
     .zadni{background:var(--navy);color:var(--white);justify-content:center}
-    .viko{position:absolute;right:-28mm;top:50%;transform:translateY(-50%);width:92mm;height:92mm;border-radius:50%;object-fit:cover}
-    .clona{position:absolute;inset:0;background:linear-gradient(90deg,var(--navy) 0%,var(--navy) 42%,rgba(16,44,64,.6) 62%,rgba(16,44,64,.1) 85%)}
-    .zadni__text{position:relative;width:48mm}
-    /* text jako v hero webu: bílý nadpis, pod ním popis */
-    .zadni h1{font:800 18pt/1.05 var(--sans);letter-spacing:-.03em;color:var(--white)}
+    .viko{position:absolute;right:8mm;top:50%;transform:translateY(-50%);width:38mm;height:38mm;border-radius:50%;object-fit:cover}
+    .zadni h1{position:relative;font:800 18pt/1.04 var(--sans);letter-spacing:-.035em;color:var(--white)}
     .zadni h1 span{display:block;color:var(--lime)}
-    .zadni__sub{margin-top:2.8mm;font:400 8pt/1.45 var(--sans);color:var(--white)}
   </style>
 </head>
 <body>
   <section class="strana predni" aria-label="Přední strana">
+    <div>
+      <h1>{web.osoba}</h1>
+      <p class="role">odborný zástupce provozovatele kanalizace</p>
+    </div>
     <div class="kontakty">
-      <a class="tel" href={web.telefonHref}><span class="zvyraz">{web.telefon}</span></a>
+      <a class="tel" href={web.telefonHref}>{web.telefon}</a>
       <a href={`mailto:${web.email}`}>{web.email}</a>
       <a class="web" href="https://vodaproobce.cz">vodaproobce.cz</a>
-    </div>
-    <div>
-      <h1><span class="zvyraz">{web.osoba}</span></h1>
-      <p class="role">odborný zástupce provozovatele kanalizace</p>
-      <p class="misto">{web.sidlo}</p>
     </div>
   </section>
 
   <section class="strana zadni" aria-label="Zadní strana">
     <Image class="viko" src={viko} alt="" width={640} format="jpg" quality={85} />
-    <div class="clona"></div>
-    <div class="zadni__text">
-      <h1>Kanalizace <span>bez starostí</span></h1>
-      <p class="zadni__sub">Odborné zastoupení provozovatele kanalizace, poradenství, evidence, hlášení a povolení pro obce.</p>
-    </div>
+    <h1>Kanalizace <span>bez starostí</span></h1>
   </section>
 </body>
 </html>
