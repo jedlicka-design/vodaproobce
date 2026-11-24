@@ -284,8 +284,6 @@ p{margin:0}
 .omne__text p{font-size:17px;line-height:1.65;color:var(--p-muted);max-width:58ch}
 .omne__text p:first-of-type{font-size:clamp(19px,1.6vw,22px);line-height:1.55;color:var(--h-navy);font-weight:500}
 .omne__text p+p{margin-top:18px}
-/* zvýrazňovač: limetkový pruh ve spodní části řádku */
-.omne mark{color:inherit;background:var(--lime);padding:0 3px;margin:0 -3px;border-radius:2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 
 /* Dotazy */
 /* Časté dotazy – vlevo nadpis a kontakt (přichycené), vpravo otázky jako karty s rychlou odpovědí */
@@ -404,7 +402,7 @@ p{margin:0}
   .dokument{min-height:0;padding:0 var(--pad) var(--pad)}
   .dokument__foto{position:relative;width:auto;height:170px;margin:0 calc(-1 * var(--pad)) 8px}
   .dokument__foto img{padding:16px 24px 0}
-  .kalendar__kruh{grid-template-columns:1fr;grid-template-areas:"dial" "lh" "ld" "ph" "pd"}
+  .kalendar__kruh{grid-template-columns:1fr;grid-template-areas:"dial" "ph" "pd" "lh" "ld"}
   .sluzby__head,.sluzby__grid{grid-template-columns:1fr}
   .sluzba__hlava{min-height:0;padding:0 var(--pad) 8px}
   .sluzba__foto{position:relative;width:auto;height:160px;margin:0 calc(-1 * var(--pad)) 8px}

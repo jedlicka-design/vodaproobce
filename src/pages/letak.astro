@@ -17,7 +17,6 @@ import stocne from '../assets/sluzba-vyrez-stocne.webp';
 // Obrázky karet ve stejném pořadí jako sluzby.bloky (jako v Services.astro).
 const fotky = [sachta, plan, kalendar, stocne];
 
-const zvyrazni = (t: string) => t.split(/==(.+?)==/g).map((cast, i) => ({ cast, mark: i % 2 === 1 }));
 const stitek = (t?: string) => t?.replace(/\.$/, '');
 // O mně: první odstavec z webu a poslední věta druhého.
 const omneText = oMne.odstavce[0] + ' ' + oMne.odstavce[1].split('. ').slice(-1)[0];
@@ -109,8 +108,6 @@ const omneText = oMne.odstavce[0] + ' ' + oMne.odstavce[1].split('. ').slice(-1)
     .omne__jmeno{font:700 9pt/1.2 var(--sans);color:var(--navy)}
     .omne__jmeno::before{content:"";display:inline-block;width:4mm;height:.7mm;margin-right:2mm;vertical-align:.35em;border-radius:1px;background:var(--navy)}
     .omne p.omne__text{margin-top:3mm;font-size:10pt;line-height:1.55;color:var(--muted)}
-    /* zvýraznění jako na webu (.omne mark): plná limetka, text lícuje díky zápornému marginu */
-    mark{color:var(--navy);background:var(--lime);padding:0 .8mm;margin:0 -.8mm;border-radius:.5mm;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 
     /* Postup */
     /* sloupce podle obsahu, názvy kroků se nelámou */
@@ -165,7 +162,7 @@ const omneText = oMne.odstavce[0] + ' ' + oMne.odstavce[1].split('. ').slice(-1)
             <h2>{oMne.nadpis}</h2>
             <p class="omne__jmeno">{web.osoba} · {web.sidlo}</p>
           </div>
-          <p class="omne__text">{zvyrazni(omneText).map(({ cast, mark }) => mark ? <mark>{cast}</mark> : cast)}</p>
+          <p class="omne__text">{omneText}</p>
         </div>
       </div>
 

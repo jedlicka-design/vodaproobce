@@ -83,7 +83,7 @@ const casti = (t: string) =>
   <meta name="robots" content="noindex">
   <title>Kalendář povinností – {web.nazev}</title>
   <style is:global>
-    :root{--navy:#102c40;--white:#f7fafc;--lime:#dbff00;--muted:#4f5f6b;--line:#dbe3ea;--chip:#e3eef8;--tint:#f1f6fb;--mesice:27mm;--zahlavi:10.15mm;--na-tmave:rgba(247,250,252,.78);
+    :root{--navy:#102c40;--white:#f7fafc;--lime:#dbff00;--muted:#4f5f6b;--line:#dbe3ea;--chip:#e3eef8;--tint:#f1f6fb;--mesice:27mm;--na-tmave:rgba(247,250,252,.78);
       --sans:'Inter Variable',system-ui,sans-serif}
     @page{size:A4;margin:0}
     *,*::before,*::after{box-sizing:border-box}
@@ -91,18 +91,18 @@ const casti = (t: string) =>
     body{font:400 9pt/1.45 var(--sans);color:var(--navy);-webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     h1,h2,h3,p,ul,ol{margin:0;padding:0}
     a{color:inherit;text-decoration:none}
-    .list{width:210mm;height:297mm;margin:0 auto;background:#fff;display:flex;flex-direction:column;overflow:hidden;position:relative}
+    .list{width:210mm;height:297mm;margin:0 auto;background:var(--navy);display:flex;flex-direction:column;overflow:hidden;position:relative}
     @media screen{.list{margin:24px auto;box-shadow:0 10px 40px rgba(16,44,64,.25)}}
     .pad{padding-left:15mm;padding-right:15mm}
 
-    /* Hlavička: tmavý pruh jako na letáku, bez fotky */
-    .hlava{position:relative;flex:0 0 auto;background:var(--navy);color:var(--white);padding:9mm 0 calc(var(--zahlavi) + 5mm)}
-    .hlava h1{font:800 28pt/1 var(--sans);letter-spacing:-.035em;color:var(--white)}
+    /* Celá stránka na navy, světlá je jen karta s povinnostmi po měsících. Hlavička bez odděleného pruhu */
+    .hlava{position:relative;flex:0 0 auto;color:var(--white);padding:10mm 0 0}
+    .hlava h1{font:800 28pt/1 var(--sans);letter-spacing:-.035em;color:var(--lime)}
     .hlava__sub{margin-top:3mm;font-size:12pt;line-height:1.45;color:var(--white)}
 
 
     /* Obsah: tabulka měsíců, pod ní průběžné povinnosti ve dvou sloupcích; volné místo jde do mezer */
-    .obsah{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:4mm;padding-top:0;padding-bottom:9mm;min-height:0}
+    .obsah{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:4mm;padding-top:6mm;padding-bottom:9mm;min-height:0}
     /* Stín karty (.tab::before) je na samostatné vrstvě. box-shadow by Chrome uložil do PDF jako obrázek,
        který náhled v macOS (Preview) kreslí jako šedý obdélník; filter přímo na kartě by zase
        převedl text na obrázek. */
@@ -110,31 +110,28 @@ const casti = (t: string) =>
     .tab{position:relative;isolation:isolate;display:grid;grid-template-columns:var(--mesice) 1fr 1fr;grid-auto-rows:auto;align-content:stretch}
     .tab::before{content:"";position:absolute;inset:0 0 0 var(--mesice);z-index:-1;border-radius:4mm;background:#fff;
       filter:drop-shadow(0 0 .15mm rgba(16,44,64,.18)) drop-shadow(0 1.2mm 2mm rgba(16,44,64,.16))}
-    /* záhlaví tabulky (výška --zahlavi) zasahuje nahoru do tmavé hlavičky */
-    .tab{margin-top:calc(-1 * var(--zahlavi))}
     .tab__hlava{padding:2.6mm 3.6mm 2.2mm;font:800 12pt/1.2 var(--sans);letter-spacing:-.01em;color:var(--navy);border-bottom:1px solid var(--line)}
-    .tab__hlava:first-child{border-bottom:0}
+    .tab__hlava:first-child{border-bottom-color:rgba(247,250,252,.22)}
     .tab__hlava--z{background:var(--tint);border-top-right-radius:4mm}
     .tab > :last-child{border-bottom-right-radius:4mm}
     .tab__bunka{padding:1.4mm 3.6mm;border-bottom:1px solid var(--line);color:var(--navy)}
     .tab__bunka--z{background:var(--tint)}
     .tab > :nth-last-child(-n+3){border-bottom:0}
-    .tab__mesic{padding:1.4mm 3mm 1.4mm 0;text-align:left;border-bottom:1px solid var(--line)}
+    .tab__mesic{padding:1.4mm 3mm 1.4mm 0;text-align:left;border-bottom:1px solid rgba(247,250,252,.22)}
     /* linky řádků pokračují i pod měsíci, aby bylo vidět, co k čemu patří */
-    /* měsíce se zvýrazňovačem jako na webu (.omne mark): plná limetka, text lícuje díky zápornému marginu */
-    .mesic{font:800 12pt/1.25 var(--sans);color:var(--navy);white-space:pre-line;background:var(--lime);padding:0 .8mm;margin:0 -.8mm;border-radius:.5mm;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+    .mesic{display:block;font:800 12pt/1.2 var(--sans);color:var(--white);white-space:pre-line}
     .tab b{font-weight:700}
     .tab i{color:var(--muted)}
     .prazdne{color:var(--muted)}
 
     /* průběžné povinnosti: bez karet, nadpis přes celou šířku a pod ním obec / zástupce vedle sebe */
     .bok{display:grid;grid-template-columns:1fr 1fr;gap:4mm 8mm}
-    .bok h2{grid-column:1/-1;font:800 16pt/1.1 var(--sans);letter-spacing:-.025em;color:var(--navy)}
-    .bok h3{display:flex;align-items:center;gap:2.6mm;font:800 11pt/1.2 var(--sans);letter-spacing:-.01em;color:var(--navy)}
+    .bok h2{grid-column:1/-1;font:800 16pt/1.1 var(--sans);letter-spacing:-.025em;color:var(--white)}
+    .bok h3{display:flex;align-items:center;gap:2.6mm;font:800 11pt/1.2 var(--sans);letter-spacing:-.01em;color:var(--white)}
     .bok ul{margin-top:2.4mm;list-style:none;display:flex;flex-direction:column;gap:1.2mm}
-    /* odrážky jako v detailu služeb na webu: navy kroužek s limetkovou fajfkou */
-    .bok li{position:relative;padding-left:5.4mm;color:var(--muted)}
-    .bok li::before{content:"";position:absolute;left:0;top:.15em;width:3.6mm;height:3.6mm;border-radius:50%;background:var(--navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23dbff00' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/2.4mm no-repeat}
+    /* odrážky jako v detailu služeb na webu, na navy obrácené: limetkový kroužek s navy fajfkou */
+    .bok li{position:relative;padding-left:5.4mm;color:var(--na-tmave)}
+    .bok li::before{content:"";position:absolute;left:0;top:.15em;width:3.6mm;height:3.6mm;border-radius:50%;background:var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23102c40' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/2.4mm no-repeat}
   </style>
 </head>
 <body>

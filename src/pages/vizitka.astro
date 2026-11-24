@@ -48,9 +48,9 @@ import viko from '../assets/kalendar-vika.webp'; // víko kanálu v ročních ob
     .kontakty .web{font-weight:700}
 
     /* Zadní strana: navy, nadpis vlevo; vpravo celé víko kanálu bez přechodu,
-       celé uvnitř ořezu (5 mm od čáry ořezu), aby se nikde neusekávalo */
+       celé uvnitř ořezu (5 mm od čáry ořezu), pootočené o 45°, aby zima byla nahoře */
     .zadni{background:var(--navy);color:var(--white);justify-content:center}
-    .viko{position:absolute;right:8mm;top:50%;transform:translateY(-50%);width:38mm;height:38mm;border-radius:50%;object-fit:cover}
+    .viko{position:absolute;right:8mm;top:50%;transform:translateY(-50%) rotate(45deg);width:38mm;height:38mm;border-radius:50%;object-fit:cover}
     .zadni h1{position:relative;font:800 18pt/1.04 var(--sans);letter-spacing:-.035em;color:var(--white)}
     .zadni h1 span{display:block;color:var(--lime)}
   </style>

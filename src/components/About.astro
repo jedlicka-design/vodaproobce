@@ -3,8 +3,6 @@ import { Picture } from 'astro:assets';
 import { oMne } from '../data/obsah';
 import { web } from '../data/web';
 import portret from '../assets/jirka-portret.webp';
-// ==text== v odstavcích → <mark> (zvýraznění akcentní barvou)
-const zvyrazni = (t: string) => t.split(/==(.+?)==/g).map((cast, i) => ({ cast, mark: i % 2 === 1 }));
 ---
 <section id="o-mne" class="section omne">
   <div class="wrap omne__wrap">
@@ -15,7 +13,7 @@ const zvyrazni = (t: string) => t.split(/==(.+?)==/g).map((cast, i) => ({ cast, 
     </figure>
     <div class="omne__text">
       <h2>{oMne.nadpis}</h2>
-      {oMne.odstavce.map((p) => <p>{zvyrazni(p).map(({ cast, mark }) => mark ? <mark>{cast}</mark> : cast)}</p>)}
+      {oMne.odstavce.map((p) => <p>{p}</p>)}
     </div>
   </div>
 </section>
